@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
+
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
 from setuptools import setup
@@ -10,37 +13,27 @@ def get_file(fn):
         return fp.read()
 
 
-requirements = [
-    # TODO: put package requirements here
-]
-
-test_requirements = [
-    # TODO: put package test requirements here
-]
+# FIXME: This requires the requirements in requirements.txt, but we need to
+# pull that in without the hashes.
 
 setup(
-    name='socorro_collector',
+    name='collector',
     version='0.1.0',
-    description="Collector for Socorro",
-    long_description=(
-        get_file('README.rst') +
-        '\n\n' +
-        get_file('HISTORY.rst')
-    ),
+    description='Prototype Socorro breakpd collector',
+    long_description=get_file('README.rst'),
     author="Will Kahn-Greene",
     author_email='willkg@mozilla.com',
-    url='https://github.com/willkg/socorro_collector',
+    url='https://github.com/willkg/socorro-collector',
     packages=[
-        'socorro_collector',
+        'collector',
     ],
     package_dir={
-        'socorro_collector': 'socorro_collector'
+        'collector': 'collector'
     },
     include_package_data=True,
-    install_requires=requirements,
     license="MPLv2",
     zip_safe=False,
-    keywords='socorro_collector',
+    keywords='breakpad crash',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -49,6 +42,4 @@ setup(
         "Programming Language :: Python :: 2",
         'Programming Language :: Python :: 2.7',
     ],
-    test_suite='tests',
-    tests_require=test_requirements
 )

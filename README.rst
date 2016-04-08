@@ -1,34 +1,46 @@
-===============================
-Socorro Collector
-===============================
+=================
+Socorro collector
+=================
 
-.. image:: https://img.shields.io/pypi/v/socorro_collector.svg
-        :target: https://pypi.python.org/pypi/socorro_collector
+Prototype extracted Socorro breakpad crash collector.
 
-.. image:: https://img.shields.io/travis/willkg/socorro_collector.svg
-        :target: https://travis-ci.org/willkg/socorro_collector
-
-.. image:: https://readthedocs.org/projects/socorro_collector/badge/?version=latest
-        :target: https://readthedocs.org/projects/socorro_collector/?badge=latest
-        :alt: Documentation Status
+* Free software: Mozilla Public License version 2.0
+* Documentation: FIXME
 
 
-Collector for Socorro
+Quickstart
+==========
 
-* Free software: Mozilla Public License version 2.0.
-* Documentation: https://socorro_collector.readthedocs.org
+Install
+-------
 
-FIXME: In progress.
+1. Clone the repo:
 
-Features
---------
+   .. code-block:: shell
 
-* TODO
+      $ git clone https://github.com/willkg/socorro-collector
 
-Credits
----------
+   .. Note::
 
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
+      If you plan on doing development, clone your fork of the repo
+      instead.
 
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+2. Install with pip >= 8:
+
+   .. code-block:: shell
+
+      $ mkvirtualenv collector
+      $ pip install --require-hashes -r requirements-dev.txt
+      $ pip install -e .
+
+
+Running in a dev environment
+----------------------------
+
+FIXME
+
+
+Running tests
+-------------
+
+FIXME
