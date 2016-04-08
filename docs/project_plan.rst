@@ -4,7 +4,9 @@ Rewrite collector project (2016q2)
 
 :author:  Will Kahn-Greene
 :date:    March 31st, 2016
-:history: 2016-03-31: Initial writing
+:history:
+          * 2016-03-31: Initial writing
+          * 2016-04-08: Draft 1 PR
 
 .. contents::
 
