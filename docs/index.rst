@@ -14,6 +14,7 @@ Contents
    contributing
    authors
    history
+   project_plan
 
 Indices and tables
 ==================
