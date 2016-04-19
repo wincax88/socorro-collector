@@ -656,6 +656,23 @@ load testing
 .. todo:: Talk to Tarek about load testing.
 
 
+s3 psuedo file names
+--------------------
+
+Rob said the current collector creates files like::
+
+    {bucket}/v1/processed_crash/0bba929f-8721-460c-dead-a43c20071027
+
+
+But that's not helpful and it takes a long time to list the bucket. A better way would be:
+
+    {bucket}/v1/processed_crash/20071027/0bba929f-8721-460c-dead-a43c
+
+
+Then we can use prefixes.
+
+When/if we do this, then we should switch from v1 to v2.
+
 gevent and other architecture thoughts
 --------------------------------------
 
