@@ -8,6 +8,7 @@ Rewrite collector project (2016q2)
           * 2016-04-08: Draft 1 PR
           * 2016-04-18: Rewrite based on pr comments, discussion with Peter and
             lots more research
+          * 2016-04-19: Overhaul after talking with Chris
 
 .. contents::
 
@@ -28,6 +29,40 @@ June 2016: Load test, build environments.
 July 2016: Push to production. Switch from current collector to new one.
 
 
+Mission
+=======
+
+We're rewriting the collector with the following goals:
+
+1. self-contained in its own repository and doesn't depend on socorro and
+   socorrolib repositories
+
+2. can be deployed on its own (as opposed to deployed with the rest of socorro)
+
+3. drop in replacement for the current collector which makes it easier to
+   transition to: it accepts HTTP POSTs like the current collector, it stores
+   crashes to s3 and it tosses items in the rabbitmq processor queue
+
+
+Assumptions
+===========
+
+Here are some assumptions about this project and the environment that we're
+accepting for now:
+
+1. The new collector will operate in a Heroku-like environment.
+
+2. We're going to use Python for the new collector.
+
+3. We have at least the same amount of operating budget for the collector as we
+   have now.
+
+4. There are a few other projects at Mozilla that perform similar roles. It's
+   likely these will converge in some way.
+
+   Given that, I'm building a collector that'll last 2 years.
+
+
 Requirements
 ============
 
@@ -37,16 +72,14 @@ Requirements
 REQ 1.1: Have lots of 9s for uptime
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-REQ 1.2: Not drop crashes on the floor
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+REQ 1.2: Avoid dropping crashes on the floor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Possible scenarios:
 
 * can't connect to s3 for a long time
 * deploying a new collector
-* switch s3 buckets which requires a configuration change and a deployment
-* collector process crashes, but server is still around
-* others?
+* switch s3 buckets which requires a configuration change and a deployment?
 
 REQ 1.3: Handle network and external resource problems gracefully
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,39 +94,32 @@ REQ 1.4: 12-factor compliant
 * Collector should have the properties of 12-factor compliant applications:
   http://12factor.net/
 
-As a proxy for this, we're going to require that this runs on Heroku. If it runs
-on Heroku, then it's probably sufficiently 12-factor to not require complex
-infrastructure and unicorns.
-
-Bonus points if we can add a "Deploy to Heroku" button in the README that shows
-up on GitHub and have that work.
+If it runs on Heroku, then it's probably sufficiently 12-factor compliant.
 
 REQ 1.5: Run in production as a single process
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Currently, the collector has a WSGI-based process that dumps crashes to the
-file system and generates uuids and then another process that runs outside of
-the HTTP-request/response cycle, picks crashes off disk, pushes them to s3
-and puts the uuid on the process queue.
+Currently, the collector has a WSGI-based process that dumps crashes to the file
+system and generates uuids. Then there's the crashmover process that picks
+crashes off disk (the disk is being used as a queue), pushes them to s3 and puts
+a uuid in the rabbitmq processor queue.
 
-We want all that to be done with a single process.
+We want all that to be done with a single process making it easier to run.
 
-REQ 1.6: Configuration changes are tracked in version control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+REQ 1.6: Horizontally autoscaled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Any behavior changes to the collector should be tracked in the repository
-alongside the code.
+We're using AWS currently and we want the autoscaler to work with the new
+collector.
 
-This lets us roll forward and backward.
+Things we might want to use for triggering scaling:
 
-This gives us an audit trail of what happened, when and why.
+1. size of queue of crashes to store in s3: this indicates the node is backing
+   up
 
-REQ 1.7: AWS autoscaled
-~~~~~~~~~~~~~~~~~~~~~~~
+2. disk/memory usage?
 
-We want AWS to be able to autoscale the collector to scale with load.
-
-REQ 1.8: Infrastructure for metrics
+REQ 1.7: Infrastructure for metrics
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We want to know what the collector(s) is doing so that we can determine
@@ -107,57 +133,77 @@ The new collector should support both syslog and statsd throughout the collector
 and not just in small parts. Adding additional metrics should be
 straight-forward.
 
+REQ 1.8: Run for weeks on end
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The plan is that we're not going to be deploying new collectors often. Given
+that, a collector process might run for weeks.
+
+REQ 1.9: Be self contained
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The current collector is part of the socorro repository and depends on
+socorrolib.
+
+The new collector will be self-contained and not depend on either socorro or
+socorrolib.
+
 
 2. Feature requirements
 -----------------------
 
-REQ 2.1: Work with different throttlers
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+REQ 2.1: Has a configrable throttler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The current collector has a throttler (LegacyThrottler).
 
-We want the new collector to have the following:
+I think for now, we're going to do things the same way, but at some point in the
+future, we want a throttler that's easier to configure.
 
-1. a null throttler that is a no-op and is the default out of the box: it should
-   log a single line per crash it looked at
-2. a throttler that does what the current LegacyThrottler does
+REQ 2.2: Stores crashes on s3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-REQ 2.2: Work with different storage classes
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+We need to store crashes on s3.
 
-The current collector has several storage classes.
+This is a critical step in order to not drop crashes on the floor.
 
-We want the new collector to have the following:
+For development purposes, it might help to have another storage class that works
+with local dev environments better, but maybe fake-s3 is fine for this.
 
-1. a null storage class that is a no-op and is the default out of the box: it
-   should log a single line per crash stored
-2. a file storage class that stores crashes in a specified directory in some
-   sensible tree structure
-3. an s3 storage class that stores crashes on s3
+REQ 2.3: Use hierarchical pseudo filenames in s3
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Rob said the current collector creates files like::
+
+    {bucket}/v1/processed_crash/0bba929f-8721-460c-dead-a43c20071027
+
+
+But that's not helpful and it takes a long time to list the bucket. A better way
+would be::
+
+    {bucket}/v1/processed_crash/20071027/0bba929f-8721-460c-dead-a43c
+
+
+Then we can use prefixes.
+
+When we do this, then we should switch from v1 to v2.
+
+REQ 2.4: Queue crashes for processing via rabbitmq
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The current collector queues crashes for processing as part of the storage class
+lineup.
+
+We don't want to queue a crash for processing until it's been stored on s3.
 
 .. Note::
 
-   Peter pointed out that we could use a fake-s3 for development. If that works
-   out, we could nix a file storage class for now.
+   The current collector in prod also selects some crashes and queues them in
+   the stage processing queue for processing on stage. We should do this or
+   something equivalent.
 
-REQ 2.3: Work with different queueing systems
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The current collector has several queuing classes.
-
-We want the new collector to have the following:
-
-1. a null queueing class that is a no-op and is the default out of the box: it
-   should log a single line per crash queued for processing
-2. a RabbitMQ class
-
-.. todo:: Might rename this to "notify classes" and make it its own step in the
-          pipeline.
-
-
-REQ 2.4: Support non-breakpad crash reports
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+REQ 2.5: Handle breakpad crash reports
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The current collector handles Breakpad reports as well as Raven reports.
 
@@ -166,15 +212,6 @@ The new collector needs to handle at least Breakpad reports.
 The current collector has a generic crash collector in addition to the breakpad
 one. The generic collector removes ``\00`` characters from incoming crash
 reports.
-
-REQ 2.5: Prod should send stage some reports
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Currently, the prod collector in the storage step tosses uuids into the stage
-processing queue. In this way, we siphon off crashes from prod to our stage
-environment.
-
-We should do this with the new collector, too.
 
 REQ 2.6: Track metrics
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -193,25 +230,17 @@ FIXME: Other feature requirements here
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-3. Developer requirements
--------------------------
+3. Other requirements
+---------------------
 
-These are not must-haves, but they're nice-to-haves that affect new development
-and ongoing maintenance.
+These are nice-to-haves and things to think about:
 
-REQ 3.1: Easy to set up a dev environment
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. Easy to set up a dev environment. A good litmus test for this would be "can
+   we explain the quick start in the README?"
 
-It should be easy to go from cloning the git repository to having a running
-collector in a dev environment.
+2. The configuration defaults should be sane and make setting it up on Heroku
+   and/or a dev environment easy.
 
-A good litmus test here would be "can we explain the quick start in the README?"
-
-REQ 3.2: Easy to configure with sane defaults
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-We want sane defaults that make setting it up on Heroku trivial. This should
-also make it easy to set up in a dev environment.
 
 
 Implementation decisions
@@ -223,132 +252,11 @@ Implementation decisions
    bunch of junk.
 
 
+Language
+--------
 
-Which architecture?
--------------------
-
-coroutine/eventloop
-~~~~~~~~~~~~~~~~~~~
-
-Something like gevent gives us asynchronous non-blocking I/O for incoming HTTP
-connections as well as outgoing s3 connections. It also gives us an eventloop
-for defering work until later and pausing.
-
-
-peter's plan
-~~~~~~~~~~~~
-
-FIXME: needs better header
-
-Have the web framework handle the incoming HTTP request and then try to push it
-to S3. If there are problems, store the crash in /tmp/to_store and handle the next
-HTTP request.
-
-If all goes well, store in s3. Then check /tmp/to_store and see if there's
-anything else that needs storing.
-
-Use a similar method for issues when notifying rabbitmq.
-
-One problem here is that storing to s3 is triggered by incoming HTTP
-connections. We'd probably want an endpoint that doesn't take a crash, but
-instead triggers storage.
-
-
-modified peter's plan
-~~~~~~~~~~~~~~~~~~~~~
-
-Web framework handles all incoming HTTP requests to ``/submit`` and stores
-crashes on disk.
-
-Requests to ``/store-it-now-dammit`` will go through crashes on disk and store
-them on s3 if possible.
-
-Have a cron job somewhere that tickles that endpoint periodically.
-
-This is probably easy to implement, but I think it's probably got a lot of edge
-case problems.
-
-
-Other plans
-~~~~~~~~~~~
-
-Synchronous IO and use multithreading to run the existing submitter app?
-
-
-will's current plan
-~~~~~~~~~~~~~~~~~~~
-
-Use a WSGI framework library that has minimal requirements and minimal magic.
-Doesn't have to be "the best". Good enough is fine. Convenient API is nice.
-
-Use gevent. This gives us non-blocking i/o and concurrent connections, but a
-synchronous API. We can constrain the total number of active connections the
-process is dealing with at a given time.
-
-Rough algorithm like this:
-
-1. get the crash from the client
-
-   If this fails, log the error, drop the crash and move on (this should only
-   fail for bad incoming connections, junk data, etc).
-
-2. save crash to disk
-
-3. throttle the crash (throttler component(s))
-
-   * This shouldn't fail because it shouldn't depend on anything external. If it
-     does fail, that's a bug.
-   * Try to reuse existing socorro code.
-
-4. store the crash (crashstorage component(s))
-
-   * If this fails, retry in 5 minutes? Logarithmic retry timeout? Use gevent.sleep.
-   * Try to reuse existing socorro code.
-
-5. notify about the crash (notifier component(s))
-
-   * If this fails, retry in 5 minutes? Logarithmic retry timeout? Use gevent.sleep.
-   * Try to reuse existing socorro code.
-
-6. delete crash from disk
-
-
-Components
-----------
-
-Current collector has notifying rabbitmq as a storage class. We might want to
-make notification a separate step:
-
-1. get the crash from the client
-2. throttle the crash
-3. store the crash
-4. notify about the crash
-
-We could write that structure as a component, so then the collector would have:
-
-1. get the crash from the client
-2. process the crash
-
-   Mozilla processor would have:
-
-   1. throttle
-   2. store
-   3. notify
-
-That seems a bit much, though. Probably better not to have that additional
-layer for now.
-
-We could also just treat it like a regular pipeline where each component is a
-transform and we build a list of them and just go through them one at a time.
-This gets tricky when one step does something that requires it to skip other
-steps because it doesn't know about other steps.
-
-We could track tags with the crash and components could change their behavior
-based on tags. For example, a crash with "CRASH-REJECTED" would just pass
-through the pipeline because no one wants to do anything with it.
-
-The problem here is that it's hard to discover components and hard to understand
-the system, but it'd be more flexible than one where the steps are hard-coded.
+We'll use Python. The rest of Socorro is in Python, we have a lot of Python
+expertise, etc.
 
 
 Which web framework?
@@ -390,10 +298,14 @@ Possibilities:
 Should we use configman for configuration?
 ------------------------------------------
 
-I think this is "Yes" until we hit a compelling "No". We'd use configman for:
+Maybe a "Yes" until we hit a compelling "No".
+
+We currently use configman for:
 
 * configuration
-* plugin infrastructure supporting plugins that have their own configuration
+* component infrastructure supporting components that have their own
+  configuration
+* runtime dependency injection
 
 If we didn't use it, we'd have to replace those things with other things. Peter
 mentioned using python-decouple for configuration. I've written plugin
@@ -401,70 +313,66 @@ frameworks before.
 
 We should note that even if we do use the configman library, we're not married
 to the way socorro uses configman. Particularly the kinds of components involved
-and their roles.
+and their roles. Further, we don't have to put everything into configuration. We
+could have some things in configuration and other things specified in code.
 
-If we use configman, we might be able to copy the relevant socorro components
-over and adjust them rather than rewrite them wholesale.
+If we do use configman, we don't want to be in the situation we're currently in
+where large swaths of behavior are specified in configuration in consul where
+there's no audit trail and it's impossible to tell how it works from reading
+through the code in the repository.
 
-.. todo:: Read through configman more.
+If we do use configman, we might be able to copy the relevant socorro components
+over and tweak them rather than rewrite them wholesale. Further, we might be
+able to reuse configuration--the transition from the old collector to the new
+one might be easier.
 
-
-Should we use socorro or socorrolib?
-------------------------------------
-
-No. The collector should be self-contained and completely unaffected by changes
-to socorro and socorrolib repositories. This is particularly important for the
-collector because of its uptime requirements.
-
-The sucky part of this is that we'll end up with some code redundancy. But, so
-it goes.
+Still to be decided at a later point.
 
 
-Research links
-==============
+Architecture
+------------
 
-* cherrypy:
+I'm currently hedging towards something like this:
 
-  * http://cherrypy.org/
+Use a WSGI framework library that has minimal requirements and minimal magic.
+Doesn't have to be "the best". Good enough is fine. Convenient API is nice.
+Bottle? Flask? Falcon?
 
-* flask framework:
+Use gevent which gives us non-blocking i/o and concurrent connections, but a
+synchronous API. We can constrain the total number of active connections the
+process is dealing with at a given time.
 
-  * http://flask.pocoo.org/
+Rough algorithm could be like this:
 
-* bottle framework:
+1. get the crash from the client
 
-  * http://bottlepy.org/docs/dev/index.html
-  * http://bottlepy.org/docs/dev/async.html
+   If this fails, log the error, drop the crash and move on (this should only
+   fail for bad incoming connections, junk data, etc).
 
-* falcon framework:
+2. save crash to disk
 
-  * http://falconframework.org/
+   This makes sure the crash is *somewhere* that's manually accessible if things
+   go to hell.
 
-* gevent:
+3. throttle the crash
 
-  * http://www.gevent.org/
-  * https://sdiehl.github.io/gevent-tutorial/
+   * This shouldn't fail because it shouldn't depend on anything external. If it
+     does fail, that's a bug.
+   * Try to reuse existing socorro code.
 
-* gunicorn:
+4. store the crash on s3
 
-  * http://gunicorn.org/
+   * If this fails, use gevent.sleep to retry in x minutes.
+   * Try to reuse existing socorro code.
 
-* heroku button:
+5. notify about the crash
 
-  * https://blog.heroku.com/archives/2014/8/7/heroku-button
+   * If this fails, use gevent.sleep to retry in x minutes.
+   * Try to reuse existing socorro code.
 
-* python fake s3:
+6. delete crash from disk
 
-  * https://github.com/jserver/mock-s3
-
-* python mock s3 for tests:
-
-  * https://pypi.python.org/pypi/moto/0.4.6
-
-* planes article that talks about issues with mono-repos vs. separated repos
-  amongst other things
-
-  * http://www.paperplanes.de/2013/10/18/the-smallest-distributed-system.html
+This hasn't been benchmarked, load tested, etc.
 
 
 Oddball notes
@@ -593,8 +501,13 @@ Crashes come in to ``/submit`` as an HTTP POST.
 A crash is a multi-part HTML form post.
 
 * form POSTs are gzipped
+* each crash comes with one or more associated dumps
 
 .. todo:: Flesh this out.
+
+.. todo:: peter says there's the feature for two http posts each holding a
+          crash, but they're connected--do they get connected with the collector
+          or elsewhere?
 
 
 Storage classes
@@ -629,11 +542,7 @@ There are 10 collectors running in production right now.
 
 Outstanding questions:
 
-.. todo:: Talk to Rob about collector features
-
-.. todo:: peter says there's the feature for two http posts each holding a
-          crash, but they're connected--do they get connected with the collector
-          or elsewhere?
+.. todo:: Are there other collector features we're missing here?
 
 .. todo:: make sure that if s3 has a major outage or api change or we have to
           switch s3 accounts or buckets or something crazy that requires us to
@@ -655,23 +564,6 @@ load testing
 
 .. todo:: Talk to Tarek about load testing.
 
-
-s3 psuedo file names
---------------------
-
-Rob said the current collector creates files like::
-
-    {bucket}/v1/processed_crash/0bba929f-8721-460c-dead-a43c20071027
-
-
-But that's not helpful and it takes a long time to list the bucket. A better way would be:
-
-    {bucket}/v1/processed_crash/20071027/0bba929f-8721-460c-dead-a43c
-
-
-Then we can use prefixes.
-
-When/if we do this, then we should switch from v1 to v2.
 
 gevent and other architecture thoughts
 --------------------------------------
@@ -701,8 +593,48 @@ use gevent?
           https://github.com/willkg/socorro-collector/pull/1/files#r59208838
 
 
-requestb.in
------------
+Research links
+==============
 
-could we build this such that people could throw together their own requestb.in
-type sites? is that helpful? does that cause us to abstract too much?
+* cherrypy:
+
+  * http://cherrypy.org/
+
+* flask framework:
+
+  * http://flask.pocoo.org/
+
+* bottle framework:
+
+  * http://bottlepy.org/docs/dev/index.html
+  * http://bottlepy.org/docs/dev/async.html
+
+* falcon framework:
+
+  * http://falconframework.org/
+
+* gevent:
+
+  * http://www.gevent.org/
+  * https://sdiehl.github.io/gevent-tutorial/
+
+* gunicorn:
+
+  * http://gunicorn.org/
+
+* heroku button:
+
+  * https://blog.heroku.com/archives/2014/8/7/heroku-button
+
+* python fake s3:
+
+  * https://github.com/jserver/mock-s3
+
+* python mock s3 for tests:
+
+  * https://pypi.python.org/pypi/moto/0.4.6
+
+* planes article that talks about issues with mono-repos vs. separated repos
+  amongst other things
+
+  * http://www.paperplanes.de/2013/10/18/the-smallest-distributed-system.html
