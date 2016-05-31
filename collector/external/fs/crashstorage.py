@@ -17,15 +17,15 @@ except ImportError:
     from StringIO import StringIO
 
 from configman import Namespace, class_converter
-from socorro.external.crashstorage_base import (
+from collector.external.crashstorage_base import (
     CrashStorageBase,
     CrashIDNotFound,
     FileDumpsMapping,
     MemoryDumpsMapping
 )
-from socorrolib.lib.ooid import dateFromOoid, depthFromOoid
-from socorrolib.lib.datetimeutil import utc_now
-from socorrolib.lib.util import DotDict
+from collector.lib.ooid import dateFromOoid, depthFromOoid
+from collector.lib.datetimeutil import utc_now
+from collector.lib.util import DotDict
 
 
 def dates_to_strings_for_json(obj):

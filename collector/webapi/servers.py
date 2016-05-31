@@ -5,7 +5,7 @@
 import web
 import os
 
-from socorro.webapi.class_partial import class_with_partial_init
+from collector.webapi.class_partial import class_with_partial_init
 
 from configman import Namespace, RequiredConfig
 

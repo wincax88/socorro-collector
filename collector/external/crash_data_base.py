@@ -2,14 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from socorrolib.lib import (
+from collector.lib import (
     MissingArgumentError,
     ResourceNotFound,
     ResourceUnavailable,
     ServiceUnavailable
 )
-from socorro.external.crashstorage_base import CrashIDNotFound
-from socorrolib.lib import external_common
+from collector.external.crashstorage_base import CrashIDNotFound
+from collector.lib import external_common
 
 
 class CrashDataBase(object):

@@ -3,7 +3,7 @@ import json
 from functools import partial
 
 from configman import Namespace, class_converter
-from socorrolib.app.socorro_app import App, main
+from collector.app.socorro_app import App, main
 
 
 #==============================================================================
@@ -32,7 +32,7 @@ class FetchApp(App):
     required_config.add_option(
         name='crashstorage_class',
         doc='the crash storage system class',
-        default='socorro.external.boto.crashstorage.BotoS3CrashStorage',
+        default='collector.external.boto.crashstorage.BotoS3CrashStorage',
         from_string_converter=class_converter
     )
 

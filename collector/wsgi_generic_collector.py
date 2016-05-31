@@ -10,11 +10,11 @@ import cStringIO
 
 from contextlib import closing
 
-from socorrolib.lib.ooid import createNewOoid
-from socorrolib.lib.util import DotDict
-from socorro.collector.throttler import DISCARD, IGNORE
-from socorrolib.lib.datetimeutil import utc_now
-from socorro.external.crashstorage_base import MemoryDumpsMapping
+from collector.lib.ooid import createNewOoid
+from collector.lib.util import DotDict
+from collector.throttler import DISCARD, IGNORE
+from collector.lib.datetimeutil import utc_now
+from collector.external.crashstorage_base import MemoryDumpsMapping
 
 from configman import RequiredConfig, Namespace, class_converter
 
@@ -136,7 +136,7 @@ class GenericCollector(GenericCollectorBase):
     required_config.storage.add_option(
         'crashstorage_class',
         doc='the source storage class',
-        default='socorro.external.fs.crashstorage'
+        default='collector.external.fs.crashstorage'
                 '.FSLegacyDatedRadixTreeStorage',
         from_string_converter=class_converter
     )

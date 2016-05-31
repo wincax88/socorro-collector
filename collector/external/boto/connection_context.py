@@ -13,8 +13,8 @@ import boto.exception
 
 from configman import Namespace, RequiredConfig, class_converter
 
-from socorrolib.lib.converters import change_default
-from socorrolib.lib.ooid import dateFromOoid
+from collector.lib.converters import change_default
+from collector.lib.ooid import dateFromOoid
 
 
 class KeyNotFound(Exception):
@@ -123,7 +123,7 @@ class ConnectionContextBase(RequiredConfig):
     )
     required_config.add_option(
         'keybuilder_class',
-        default='socorro.external.boto.connection_context.KeyBuilderBase',
+        default='collector.external.boto.connection_context.KeyBuilderBase',
         doc=(
             'fully qualified dotted Python classname to handle building s3 '
             'pseudo-filenames'

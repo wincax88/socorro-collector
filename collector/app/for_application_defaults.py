@@ -44,26 +44,14 @@ class ApplicationDefaultsProxy(object):
         """in the future, re-implement this as an automatic discovery service
         """
         return {
-            'collector': 'socorro.collector.collector_app.CollectorApp',
-            'collector2015': 'socorro.collector.collector_app.Collector2015App',
-            'crashmover': 'socorro.collector.crashmover_app.CrashMoverApp',
-            'setupdb': 'socorro.external.postgresql.setupdb_app.SocorroDBApp',
-            'submitter': 'socorro.collector.submitter_app.SubmitterApp',
-            # crontabber not yet supported in this environment
-            #'crontabber': 'socorro.cron.crontabber_app.CronTabberApp',
-            'middleware': 'socorro.middleware.middleware_app.MiddlewareApp',
-            'processor': 'socorro.processor.processor_app.ProcessorApp',
-            'fetch': 'socorro.external.fetch_app.FetchApp',
-            'copy_processed':
-                'socorro.collector.crashmover_app.ProcessedCrashCopierApp',
-            'copy_raw_and_processed':
-                'socorro.collector.crashmover_app.RawAndProcessedCopierApp',
-            'reprocess_crashlist':
-                'socorro.external.rabbitmq.reprocess_crashlist.ReprocessCrashlistApp',
-            'purge_rmq':
-            'socorro.external.rabbitmq.purge_queue_app.PurgeRabbitMQQueueApp',
-            'correlations':
-            'socorro.analysis.correlations.correlations_app.CorrelationsApp',
+            'collector': 'collector.collector_app.CollectorApp',
+            'collector2015': 'collector.collector_app.Collector2015App',
+            'crashmover': 'collector.crashmover_app.CrashMoverApp',
+            'fetch': 'collector.external.fetch_app.FetchApp',
+            'copy_processed': 'collector.collector.crashmover_app.ProcessedCrashCopierApp',
+            'copy_raw_and_processed': 'collector.collector.crashmover_app.RawAndProcessedCopierApp',
+            'reprocess_crashlist': 'collector.external.rabbitmq.reprocess_crashlist.ReprocessCrashlistApp',
+            'purge_rmq': 'collector.external.rabbitmq.purge_queue_app.PurgeRabbitMQQueueApp',
         }
 
 
