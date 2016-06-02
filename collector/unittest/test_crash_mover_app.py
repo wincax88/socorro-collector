@@ -5,10 +5,10 @@
 from nose.tools import eq_, ok_, assert_raises
 from mock import Mock
 
-from socorro.collector.crashmover_app import CrashMoverApp
-from socorrolib.lib.threaded_task_manager import ThreadedTaskManager
-from socorrolib.lib.util import DotDict, SilentFakeLogger
-from socorro.unittest.testbase import TestCase
+from collector.crashmover_app import CrashMoverApp
+from collector.lib.threaded_task_manager import ThreadedTaskManager
+from collector.lib.util import DotDict, SilentFakeLogger
+from collector.unittest.testbase import TestCase
 
 
 class TestCrashMoverApp(TestCase):

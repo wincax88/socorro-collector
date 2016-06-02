@@ -4,15 +4,15 @@ from mock import Mock
 from configman import ConfigurationManager
 from nose.tools import eq_, ok_, assert_raises
 
-from socorro.external.fs.crashstorage import (
+from collector.external.fs.crashstorage import (
     FSLegacyDatedRadixTreeStorage,
     FSTemporaryStorage
 )
-from socorro.external.crashstorage_base import (
+from collector.external.crashstorage_base import (
     CrashIDNotFound,
     MemoryDumpsMapping,
 )
-from socorro.unittest.testbase import TestCase
+from collector.unittest.testbase import TestCase
 
 
 class TestFSLegacyDatedRadixTreeStorage(TestCase):

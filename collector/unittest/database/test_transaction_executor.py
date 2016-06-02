@@ -2,23 +2,94 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import contextlib
+import socket
+
 from nose.tools import eq_, ok_, assert_raises
-import psycopg2
-from configman import Namespace, ConfigurationManager, class_converter
-import socorro.database.transaction_executor
-from socorro.database.transaction_executor import (
+from configman import Namespace, ConfigurationManager, class_converter, RequiredConfig
+import collector.database.transaction_executor
+from collector.database.transaction_executor import (
   TransactionExecutor, TransactionExecutorWithInfiniteBackoff)
-from socorro.external.postgresql.connection_context import ConnectionContext
-from socorro.unittest.testbase import TestCase
+from collector.unittest.testbase import TestCase
+
+
+# From psycopg2.
+TRANSACTION_STATUS_IDLE = 0
+TRANSACTION_STATUS_INTRANS = 2
+class OperationalError(Exception): pass
+class ProgrammingError(Exception): pass
+class InterfaceError(Exception): pass
+
 
 class SomeError(Exception):
     pass
 
 
-class MockConnectionContext(ConnectionContext):
+class MockConnectionContext(RequiredConfig):
+    """Minimum viable connection context class
+
+    Note: In socorro, this test module uses the postgres external connection
+    class for testing. We're not pulling in any postgres anything into
+    socorro-collector, so we implement this class as a mock version of the
+    postgres connection context.
+
+    """
+    required_config = Namespace()
+
+    def __init__(self, config, local_config=None):
+        self.config = config
+        self.operational_exceptions = (
+            InterfaceError,
+            socket.timeout,
+        )
+        self.conditional_exceptions = (
+            OperationalError,
+            ProgrammingError,
+        )
 
     def connection(self, __=None):
         return MockConnection()
+ 
+    def close_connection(self, connection, force=False):
+        connection.close()
+
+    @contextlib.contextmanager
+    def __call__(self, name=None):
+        conn = self.connection(name)
+        try:
+            yield conn
+        finally:
+            self.close_connection(conn)
+
+    def is_operational_exception(self, exp):
+        """return True if a conditional exception is actually an operational
+        error. Return False if it's a genuine error that should probably be
+        raised and propagate up.
+
+        Some conditional exceptions might be actually be some form of
+        operational exception "labelled" wrong by the psycopg2 code error
+        handler.
+        """
+        message = exp.args[0]
+        if message in ('SSL SYSCALL error: EOF detected', ):
+            # Ideally we'd like to check against exp.pgcode values
+            # but certain odd ProgrammingError exceptions don't have
+            # pgcodes so we have to rely on reading the pgerror :(
+            return True
+
+        if (
+            isinstance(exp, OperationalError) and
+            message not in ('out of memory',)
+        ):
+            return True
+
+        # at the of writing, the list of exceptions is short but this would be
+        # where you add more as you discover more odd cases of psycopg2
+
+        return False
+
+    def force_reconnect(self):
+        pass
 
 
 class MockLogging:
@@ -44,8 +115,7 @@ class MockLogging:
 class MockConnection(object):
 
     def __init__(self):
-        self.transaction_status = \
-          psycopg2.extensions.TRANSACTION_STATUS_IDLE
+        self.transaction_status = TRANSACTION_STATUS_IDLE
 
     def get_transaction_status(self):
         return self.transaction_status
@@ -143,8 +213,7 @@ class TestTransactionExecutor(TestCase):
 
             def mock_function(connection):
                 assert isinstance(connection, MockConnection)
-                connection.transaction_status = \
-                  psycopg2.extensions.TRANSACTION_STATUS_INTRANS
+                connection.transaction_status = TRANSACTION_STATUS_INTRANS
                 raise SomeError('crap!')
 
             assert_raises(SomeError, executor, mock_function)
@@ -231,14 +300,14 @@ class TestTransactionExecutor(TestCase):
                 # so after 2 + 4 + 6 + 10 + 15 seconds
                 # all will be exhausted
                 if sum(_sleep_count) < sum([2, 4, 6, 10, 15]):
-                    raise psycopg2.OperationalError('Arh!')
+                    raise OperationalError('Arh!')
 
             def mock_sleep(n):
                 _sleep_count.append(n)
 
             # monkey patch the sleep function from inside transaction_executor
-            _orig_sleep = socorro.database.transaction_executor.time.sleep
-            socorro.database.transaction_executor.time.sleep = mock_sleep
+            _orig_sleep = collector.database.transaction_executor.time.sleep
+            collector.database.transaction_executor.time.sleep = mock_sleep
 
             try:
                 executor(mock_function)
@@ -249,7 +318,7 @@ class TestTransactionExecutor(TestCase):
                 eq_(len(mock_logging.criticals), 5)
                 ok_(len(_sleep_count) > 10)
             finally:
-                socorro.database.transaction_executor.time.sleep = _orig_sleep
+                collector.database.transaction_executor.time.sleep = _orig_sleep
 
     def test_operation_error_with_postgres_with_backoff_with_rollback(self):
         required_config = Namespace()
@@ -286,22 +355,21 @@ class TestTransactionExecutor(TestCase):
 
             def mock_function(connection):
                 assert isinstance(connection, MockConnection)
-                connection.transaction_status = \
-                  psycopg2.extensions.TRANSACTION_STATUS_INTRANS
+                connection.transaction_status = TRANSACTION_STATUS_INTRANS
                 _function_calls.append(connection)
                 # the default sleep times are going to be,
                 # 2, 4, 6, 10, 15
                 # so after 2 + 4 + 6 + 10 + 15 seconds
                 # all will be exhausted
                 if sum(_sleep_count) < sum([2, 4, 6, 10, 15]):
-                    raise psycopg2.OperationalError('Arh!')
+                    raise OperationalError('Arh!')
 
             def mock_sleep(n):
                 _sleep_count.append(n)
 
             # monkey patch the sleep function from inside transaction_executor
-            _orig_sleep = socorro.database.transaction_executor.time.sleep
-            socorro.database.transaction_executor.time.sleep = mock_sleep
+            _orig_sleep = collector.database.transaction_executor.time.sleep
+            collector.database.transaction_executor.time.sleep = mock_sleep
 
             try:
                 executor(mock_function)
@@ -312,7 +380,7 @@ class TestTransactionExecutor(TestCase):
                 eq_(len(mock_logging.criticals), 5)
                 ok_(len(_sleep_count) > 10)
             finally:
-                socorro.database.transaction_executor.time.sleep = _orig_sleep
+                collector.database.transaction_executor.time.sleep = _orig_sleep
 
     def test_programming_error_with_postgres_with_backoff_with_rollback(self):
         required_config = Namespace()
@@ -348,15 +416,14 @@ class TestTransactionExecutor(TestCase):
 
             def mock_function_struggling(connection):
                 assert isinstance(connection, MockConnection)
-                connection.transaction_status = \
-                  psycopg2.extensions.TRANSACTION_STATUS_INTRANS
+                connection.transaction_status = TRANSACTION_STATUS_INTRANS
                 _function_calls.append(connection)
                 # the default sleep times are going to be,
                 # 2, 4, 6, 10, 15
                 # so after 2 + 4 + 6 + 10 + 15 seconds
                 # all will be exhausted
                 if sum(_sleep_count) < sum([2, 4, 6, 10, 15]):
-                    raise psycopg2.ProgrammingError(
+                    raise ProgrammingError(
                         'SSL SYSCALL error: EOF detected'
                     )
 
@@ -364,8 +431,8 @@ class TestTransactionExecutor(TestCase):
                 _sleep_count.append(n)
 
             # monkey patch the sleep function from inside transaction_executor
-            _orig_sleep = socorro.database.transaction_executor.time.sleep
-            socorro.database.transaction_executor.time.sleep = mock_sleep
+            _orig_sleep = collector.database.transaction_executor.time.sleep
+            collector.database.transaction_executor.time.sleep = mock_sleep
 
             try:
                 executor(mock_function_struggling)
@@ -376,7 +443,7 @@ class TestTransactionExecutor(TestCase):
                 eq_(len(mock_logging.criticals), 5)
                 ok_(len(_sleep_count) > 10)
             finally:
-                socorro.database.transaction_executor.time.sleep = _orig_sleep
+                collector.database.transaction_executor.time.sleep = _orig_sleep
 
         # this time, simulate an actual code bug where a callable function
         # raises a ProgrammingError() exception by, for example, a syntax error
@@ -387,11 +454,10 @@ class TestTransactionExecutor(TestCase):
 
             def mock_function_developer_mistake(connection):
                 assert isinstance(connection, MockConnection)
-                connection.transaction_status = \
-                  psycopg2.extensions.TRANSACTION_STATUS_INTRANS
-                raise psycopg2.ProgrammingError("syntax error")
+                connection.transaction_status = TRANSACTION_STATUS_INTRANS
+                raise ProgrammingError("syntax error")
 
-            assert_raises(psycopg2.ProgrammingError,
+            assert_raises(ProgrammingError,
                               executor,
                               mock_function_developer_mistake)
 
@@ -434,8 +500,7 @@ class TestTransactionExecutor(TestCase):
 
             def mock_function(connection):
                 assert isinstance(connection, MockConnection)
-                connection.transaction_status = \
-                  psycopg2.extensions.TRANSACTION_STATUS_INTRANS
+                connection.transaction_status = TRANSACTION_STATUS_INTRANS
                 raise AbandonTransaction('crap!')
 
             # the method to test
@@ -486,8 +551,7 @@ class TestTransactionExecutor(TestCase):
 
             def mock_function(connection):
                 assert isinstance(connection, MockConnection)
-                connection.transaction_status = \
-                  psycopg2.extensions.TRANSACTION_STATUS_INTRANS
+                connection.transaction_status = TRANSACTION_STATUS_INTRANS
                 raise AbandonTransaction('crap!')
 
             # the method to test

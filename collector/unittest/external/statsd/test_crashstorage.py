@@ -4,17 +4,17 @@
 
 from mock import patch, call, Mock
 from nose.tools import eq_, ok_, assert_raises
-from socorro.unittest.testbase import TestCase
+from collector.unittest.testbase import TestCase
 
 from datetime import datetime
 
 from configman.dotdict import DotDict
 
-from socorro.external.statsd.crashstorage import (
+from collector.external.statsd.crashstorage import (
     StatsdCrashStorage,
     StatsdBenchmarkingCrashStorage,
 )
-from socorro.external.statsd.dogstatsd import StatsClient
+from collector.external.statsd.dogstatsd import StatsClient
 
 #==============================================================================
 class TestStatsdCrashStorage(TestCase):
@@ -35,7 +35,7 @@ class TestStatsdCrashStorage(TestCase):
         config = self.setup_config()
         number_of_calls =  10
 
-        with patch('socorro.external.statsd.dogstatsd.statsd') as statsd_obj:
+        with patch('collector.external.statsd.dogstatsd.statsd') as statsd_obj:
             cs =  StatsdCrashStorage(config)
             for x in range(number_of_calls):
                 cs.save_processed(x, {})
@@ -50,7 +50,7 @@ class TestStatsdCrashStorage(TestCase):
         config.statsd_prefix = 'processor'
         number_of_calls =  10
 
-        with patch('socorro.external.statsd.dogstatsd.statsd') as statsd_obj:
+        with patch('collector.external.statsd.dogstatsd.statsd') as statsd_obj:
             cs =  StatsdCrashStorage(config)
             for x in range(number_of_calls):
                 cs.save_processed(x, {})
@@ -65,7 +65,7 @@ class TestStatsdCrashStorage(TestCase):
         config.statsd_prefix = 'processor'
         number_of_calls =  10
 
-        with patch('socorro.external.statsd.dogstatsd.statsd') as statsd_obj:
+        with patch('collector.external.statsd.dogstatsd.statsd') as statsd_obj:
             cs =  StatsdCrashStorage(config)
             for x in range(number_of_calls):
                 cs.some_random_method(x, {})
@@ -90,11 +90,11 @@ class TestStatsdBenchmarkingCrashStorage(TestCase):
         return config
 
     #--------------------------------------------------------------------------
-    @patch('socorro.external.statsd.dogstatsd.statsd')
+    @patch('collector.external.statsd.dogstatsd.statsd')
     def test_save(self, statsd_obj):
         config = self.setup_config('timing')
         cs =  StatsdBenchmarkingCrashStorage(config)
-        now_str = 'socorro.external.statsd.statsd_base.datetime'
+        now_str = 'collector.external.statsd.statsd_base.datetime'
         with patch(now_str) as now_mock:
             times =  [
                 datetime(2015, 5, 4, 15, 10, 3),
@@ -121,11 +121,11 @@ class TestStatsdBenchmarkingCrashStorage(TestCase):
             )
 
     #--------------------------------------------------------------------------
-    @patch('socorro.external.statsd.dogstatsd.statsd')
+    @patch('collector.external.statsd.dogstatsd.statsd')
     def test_get(self, statsd_obj):
         config = self.setup_config('timing')
         cs =  StatsdBenchmarkingCrashStorage(config)
-        now_str = 'socorro.external.statsd.statsd_base.datetime'
+        now_str = 'collector.external.statsd.statsd_base.datetime'
         with patch(now_str) as now_mock:
             times =  [
                 datetime(2015, 5, 4, 15, 10, 3),

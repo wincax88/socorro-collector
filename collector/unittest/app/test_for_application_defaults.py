@@ -7,12 +7,12 @@ from nose.tools import eq_, ok_
 from configman import class_converter
 from configman.dotdict import DotDict
 
-from socorrolib.unittest.testbase import TestCase
-from socorrolib.app.for_application_defaults import (
+from collector.unittest.testbase import TestCase
+from collector.app.for_application_defaults import (
     ApplicationDefaultsProxy,
     ValueSource,
 )
-from socorrolib.app.socorro_app import App
+from collector.app.socorro_app import App
 
 
 #==============================================================================
@@ -32,46 +32,12 @@ class TestApplicationDefaultsProxy(TestCase):
     def setUp(self):
         self.proxy = ApplicationDefaultsProxy()
 
-    def test_app_converter(self):
-        # temp shim, cannot load the socorro classes to test
-        #eq_(
-        #   self.proxy.str_to_application_class('collector'),
-        #   class_converter('socorrolib.collector.collector_app.CollectorApp')
-        #)
-        #eq_(
-        #   self.proxy.str_to_application_class('crashmover'),
-        #   class_converter('socorrolib.collector.crashmover_app.CrashMoverApp')
-        #)
-        #eq_(
-        #   self.proxy.str_to_application_class('submitter'),
-        #   class_converter('socorrolib.collector.submitter_app.SubmitterApp')
-        #)
-        #eq_(
-            #self.proxy.str_to_application_class('crontabber'),
-            #class_converter('socorrolib.cron.crontabber_app.CronTabberApp')
-        #)
-        #eq_(
-        #   self.proxy.str_to_application_class('middleware'),
-        #  class_converter('socorrolib.middleware.middleware_app.MiddlewareApp')
-        #)
-        #eq_(
-        #    self.proxy.str_to_application_class('processor'),
-        #    class_converter('socorrolib.processor.processor_app.ProcessorApp')
-        #)
-        #eq_(
-        #    self.proxy.str_to_application_class(
-        #        'socorrolib.external.hb.hbase_client.HBaseClientApp'
-        #    ),
-        #  class_converter('socorrolib.external.hb.hbase_client.HBaseClientApp')
-        #)
-        pass
-
     def test_application_defaults(self):
         new_proxy = ApplicationDefaultsProxy()
         eq_(new_proxy.application_defaults, DotDict())
 
         new_proxy.str_to_application_class(
-            'socorrolib.unittest.app.test_for_application_defaults.SomeApp'
+            'collector.unittest.app.test_for_application_defaults.SomeApp'
         )
 
         eq_(
@@ -98,7 +64,7 @@ class TestValueSource(TestCase):
             DotDict()
         )
         new_proxy.str_to_application_class(
-            'socorrolib.unittest.app.test_for_application_defaults.SomeApp'
+            'collector.unittest.app.test_for_application_defaults.SomeApp'
         )
         eq_(
             vs.get_values(None, None, dict),

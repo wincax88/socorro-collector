@@ -5,14 +5,14 @@
 from mock import Mock, MagicMock, patch
 from nose.tools import eq_, ok_, assert_raises
 
-from socorro.external.rabbitmq import priorityjobs
-from socorro.unittest.testbase import TestCase
+from collector.external.rabbitmq import priorityjobs
+from collector.unittest.testbase import TestCase
 
 from configman.dotdict import DotDictWithAcquisition
 
 #==============================================================================
 class IntegrationTestPriorityjobs(TestCase):
-    """Test socorro.external.rabbitmq.priorityjobs.Priorityjobs class."""
+    """Test collector.external.rabbitmq.priorityjobs.Priorityjobs class."""
 
     def setUp(self):
         """Create a configuration context."""
@@ -49,7 +49,7 @@ class IntegrationTestPriorityjobs(TestCase):
 
         # with new config
         with patch(
-            'socorro.external.rabbitmq.priorityjobs.pika') as mocked_pika:
+            'collector.external.rabbitmq.priorityjobs.pika') as mocked_pika:
             jobs = priorityjobs.Priorityjobs(config=self.config)
             mocked_connection =  self.config.rabbitmq.rabbitmq_class
             mocked_connection.return_value.return_value = MagicMock()

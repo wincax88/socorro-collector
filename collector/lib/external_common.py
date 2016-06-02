@@ -9,9 +9,9 @@ Common functions for external modules.
 import json
 import datetime
 
-from socorrolib.lib import BadArgumentError
-from socorrolib.lib.util import DotDict
-import socorrolib.lib.datetimeutil as dtutil
+from collector.lib import BadArgumentError
+from collector.lib.util import DotDict
+import collector.lib.datetimeutil as dtutil
 
 
 def parse_arguments(filters, arguments, modern=False):

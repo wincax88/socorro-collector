@@ -10,25 +10,25 @@ from os.path import join
 
 import boto.exception
 
-from socorrolib.lib.util import DotDict
-from socorro.external.crashstorage_base import (
+from collector.lib.util import DotDict
+from collector.external.crashstorage_base import (
     Redactor,
     MemoryDumpsMapping
 )
-from socorro.external.boto.connection_context import (
+from collector.external.boto.connection_context import (
     KeyBuilderBase,
     S3ConnectionContext
 )
-from socorro.external.boto.crashstorage import (
+from collector.external.boto.crashstorage import (
     BotoS3CrashStorage,
     SupportReasonAPIStorage
 )
-from socorro.database.transaction_executor import (
+from collector.database.transaction_executor import (
     TransactionExecutor,
     TransactionExecutorWithLimitedBackoff,
 )
-from socorro.external.crashstorage_base import CrashIDNotFound
-import socorro.unittest.testbase
+from collector.external.crashstorage_base import CrashIDNotFound
+import collector.unittest.testbase
 
 
 a_raw_crash = {
@@ -48,7 +48,7 @@ S3ConnectionContext.operational_exceptions = (ABadDeal, )
 S3ConnectionContext.conditional_exceptions = (ConditionallyABadDeal, )
 
 
-class TestCase(socorro.unittest.testbase.TestCase):
+class TestCase(collector.unittest.testbase.TestCase):
 
     @classmethod
     def setUpClass(cls):

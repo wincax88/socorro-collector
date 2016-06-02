@@ -10,13 +10,13 @@ from mock import (
 )
 from threading import currentThread
 
-from socorro.external.rabbitmq.connection_context import (
+from collector.external.rabbitmq.connection_context import (
     Connection,
     ConnectionContext,
     ConnectionContextPooled
 )
-from socorrolib.lib.util import DotDict
-from socorro.unittest.testbase import TestCase
+from collector.lib.util import DotDict
+from collector.unittest.testbase import TestCase
 
 
 #==============================================================================
@@ -94,7 +94,7 @@ class TestConnectionContext(TestCase):
     #--------------------------------------------------------------------------
     def test_connection(self):
         config = self._setup_config()
-        pika_string = 'socorro.external.rabbitmq.connection_context.pika'
+        pika_string = 'collector.external.rabbitmq.connection_context.pika'
         with patch(pika_string) as mocked_pika_module:
             conn_context_functor = ConnectionContext(config)
             conn = conn_context_functor.connection()
@@ -132,7 +132,7 @@ class TestConnectionContext(TestCase):
     #--------------------------------------------------------------------------
     def test_call_and_close_connecton(self):
         config = self._setup_config()
-        pika_string = 'socorro.external.rabbitmq.connection_context.pika'
+        pika_string = 'collector.external.rabbitmq.connection_context.pika'
         with patch(pika_string):
             conn_context_functor = ConnectionContext(config)
             with conn_context_functor() as conn_context:
@@ -171,7 +171,7 @@ class TestConnectionContextPooled(TestCase):
     #--------------------------------------------------------------------------
     def test_connection(self):
         config = self._setup_config()
-        pika_string = 'socorro.external.rabbitmq.connection_context.pika'
+        pika_string = 'collector.external.rabbitmq.connection_context.pika'
         with patch(pika_string):
             conn_context_functor = ConnectionContextPooled(config)
             conn = conn_context_functor.connection()
@@ -191,7 +191,7 @@ class TestConnectionContextPooled(TestCase):
     #--------------------------------------------------------------------------
     def test_close_connection(self):
         config = self._setup_config()
-        pika_string = 'socorro.external.rabbitmq.connection_context.pika'
+        pika_string = 'collector.external.rabbitmq.connection_context.pika'
         with patch(pika_string):
             conn_context_functor = ConnectionContextPooled(config)
             conn = conn_context_functor.connection('dwight')
@@ -216,7 +216,7 @@ class TestConnectionContextPooled(TestCase):
     #--------------------------------------------------------------------------
     def test_close(self):
         config = self._setup_config()
-        pika_string = 'socorro.external.rabbitmq.connection_context.pika'
+        pika_string = 'collector.external.rabbitmq.connection_context.pika'
         with patch(pika_string):
             conn_context_functor = ConnectionContextPooled(config)
             conn_context_functor.connection()
@@ -228,7 +228,7 @@ class TestConnectionContextPooled(TestCase):
     #--------------------------------------------------------------------------
     def test_force_reconnect(self):
         config = self._setup_config()
-        pika_string = 'socorro.external.rabbitmq.connection_context.pika'
+        pika_string = 'collector.external.rabbitmq.connection_context.pika'
         with patch(pika_string):
             conn_context_functor = ConnectionContextPooled(config)
             conn = conn_context_functor.connection()

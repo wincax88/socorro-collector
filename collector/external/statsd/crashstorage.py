@@ -3,10 +3,10 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 
-from socorro.external.statsd.statsd_base import (
+from collector.external.statsd.statsd_base import (
     StatsdCounter as StatsdCrashStorage,
 )
-from socorro.external.statsd.statsd_base import (
+from collector.external.statsd.statsd_base import (
     StatsdBenchmarkingWrapper as StatsdBenchmarkingCrashStorage,
 )
 

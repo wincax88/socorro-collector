@@ -25,7 +25,7 @@ class StatsdEnabledBase(RequiredConfig):
     required_config.add_option(
         'statsd_class',
         doc='the fully qualified name of the statsd client',
-        default='socorro.external.statsd.dogstatsd.StatsClient',
+        default='collector.external.statsd.dogstatsd.StatsClient',
         reference_value_from='resource.statsd',
         from_string_converter=class_converter,
     )

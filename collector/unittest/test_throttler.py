@@ -5,8 +5,8 @@
 import re
 import mock
 
-from socorrolib.lib.util import DotDict
-from socorro.collector.throttler import (
+from collector.lib.util import DotDict
+from collector.throttler import (
   LegacyThrottler,
   ACCEPT,
   DEFER,

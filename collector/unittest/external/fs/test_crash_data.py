@@ -9,13 +9,13 @@ from configman import ConfigurationManager, Namespace
 from mock import Mock
 from nose.tools import eq_, assert_raises
 
-from socorrolib.lib import (
+from collector.lib import (
     MissingArgumentError,
     ResourceNotFound,
     ResourceUnavailable,
 )
-from socorro.external.fs import crash_data, crashstorage
-from socorro.unittest.testbase import TestCase
+from collector.external.fs import crash_data, crashstorage
+from collector.unittest.testbase import TestCase
 
 
 class IntegrationTestCrashData(TestCase):

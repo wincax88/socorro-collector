@@ -8,13 +8,13 @@ import json
 
 from nose.tools import eq_, ok_, assert_raises
 
-from socorro.collector.submitter_app import (
+from collector.submitter_app import (
     SubmitterApp,
     SubmitterFileSystemWalkerSource,
 )
 from configman.dotdict import DotDict
-from socorro.external.crashstorage_base import Redactor
-from socorro.unittest.testbase import TestCase
+from collector.external.crashstorage_base import Redactor
+from collector.unittest.testbase import TestCase
 
 
 #------------------------------------------------------------------------------

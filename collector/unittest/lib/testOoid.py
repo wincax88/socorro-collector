@@ -3,11 +3,11 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import uuid as uu
-import  socorrolib.lib.ooid as oo
+import collector.lib.ooid as oo
 import datetime as dt
 
-from socorrolib.lib.datetimeutil import utc_now, UTC
-from socorrolib.unittest.testbase import TestCase
+from collector.lib.datetimeutil import utc_now, UTC
+from collector.unittest.testbase import TestCase
 
 class TestOoid(TestCase):
   def setUp(self):

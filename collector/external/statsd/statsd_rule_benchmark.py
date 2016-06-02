@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from socorro.external.statsd.statsd_base import (
+from collector.external.statsd.statsd_base import (
     StatsdBenchmarkingWrapper as StatsdRuleBenchmarkWrapper,
 )
 
@@ -24,7 +24,7 @@ from socorro.external.statsd.statsd_base import (
 ##    public_symbols_url=https://s3-us-west-2.amazonaws.com/org.mozilla.crash-stats.symbols-public/v1
 ##
 ##    # fully qualified classname
-##    rule_class=socorro.processor.breakpad_transform_rules.BreakpadStackwalkerRule2015
+##    rule_class=collector.processor.breakpad_transform_rules.BreakpadStackwalkerRule2015
 ##
 ##    # the path where the symbol cache is found, this location must be readable and writeable (quote path with embedded spaces)
 ##    symbol_cache_path=/tmp/symbols
@@ -35,10 +35,10 @@ from socorro.external.statsd.statsd_base import (
 # "wrapped_object_class":
 #
 ##    # fully qualified classname
-##    rule_class=socorro.external.statsd.statsd_rule_benchmark.StatsdRuleBenchmarkWrapper
+##    rule_class=collector.external.statsd.statsd_rule_benchmark.StatsdRuleBenchmarkWrapper
 ##
 ##    # fully qualified Python class path for an object to an be benchmarked
-##    wrapped_object_class=socorro.processor.breakpad_transform_rules.BreakpadStackwalkerRule2015
+##    wrapped_object_class=collector.processor.breakpad_transform_rules.BreakpadStackwalkerRule2015
 #
 # Then we add the requirements of statsd
 #
@@ -47,8 +47,8 @@ from socorro.external.statsd.statsd_base import (
 ##    statsd_prefix=processor
 ##    active_list=act  # <-- very important
 
-from socorrolib.lib.transform_rules import Rule
-from socorrolib.lib.converters import change_default
+from collector.lib.transform_rules import Rule
+from collector.lib.converters import change_default
 
 from configman import Namespace, class_converter
 
@@ -57,7 +57,7 @@ class CountAnythingRuleBase(Rule):
     required_config = Namespace()
     required_config.add_option(
         'counter_class',
-        default="socorro.external.statsd.statsd_base.StatsdCounter",
+        default="collector.external.statsd.statsd_base.StatsdCounter",
         doc="the name of the class that implements the counter object",
         from_string_converter=class_converter
     )
