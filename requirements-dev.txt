@@ -1,2 +1,19 @@
 -r requirements.txt
 
+flake8==2.5.2 \
+    --hash=sha256:07bbc7bfb6a35fbb973851a6465f8d94768f5e73f0c4fd4789f886834055c484 \
+    --hash=sha256:3dbee9045b68ed19e35fbe9da58f3407debcad16eca38b36f78dd695eca4ca6c
+mccabe==0.3.1 \
+    --hash=sha256:bd6c080fb372aebcb0ce19e35ddac744f2abf5a7befa207db2d1097d48efe63a \
+    --hash=sha256:5f7ea6fb3aa9afe146d07fd6d5cedf788747d8b0c29e44732453c2b2db1e3d16
+mock==0.8.0 \
+    --hash=sha256:96fa4def4e80200be827c3f51147dd7b3fa8873b9207e3325d47ba45bf29a5c1 \
+    --hash=sha256:e904edfb90da84129c06252cd3a05f90b4eebc1bb5b85ee96e56ff6cf69438d5
+nose==1.3.0 \
+    --hash=sha256:4e63cc3325de75cf98ffad40be72fa69753de824695173178f74c034fe4f5260
+pyflakes==1.0.0 \
+    --hash=sha256:071d121e9e7b33058aa1ba5de7bce9b97bfa3149cfe1acbb6587c21fc1c8eda1 \
+    --hash=sha256:f39e33a4c03beead8774f005bd3ecf0c3f2f264fa0201de965fce0aff1d34263
+pep8==1.7.0 \
+    --hash=sha256:4fc2e478addcf17016657dff30b2d8d611e8341fac19ccf2768802f6635d7b8a \
+    --hash=sha256:a113d5f5ad7a7abacef9df5ec3f2af23a20a28005921577b15dd584d099d5900
