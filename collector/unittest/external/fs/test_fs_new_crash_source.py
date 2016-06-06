@@ -4,11 +4,11 @@
 
 from nose.tools import eq_, ok_
 
-from socorro.external.fs.fs_new_crash_source import (
+from collector.external.fs.fs_new_crash_source import (
     FSNewCrashSource
 )
-from socorrolib.lib.util import DotDict
-from socorro.unittest.testbase import TestCase
+from collector.lib.util import DotDict
+from collector.unittest.testbase import TestCase
 
 
 #==============================================================================

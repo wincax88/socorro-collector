@@ -5,7 +5,7 @@
 import mock
 from nose.tools import eq_, ok_, assert_raises
 
-from socorro.external.crashstorage_base import (
+from collector.external.crashstorage_base import (
     CrashStorageBase,
     PolyStorageError,
     PolyCrashStorage,
@@ -18,7 +18,7 @@ from socorro.external.crashstorage_base import (
     MemoryDumpsMapping,
     FileDumpsMapping
 )
-from socorro.unittest.testbase import TestCase
+from collector.unittest.testbase import TestCase
 from configman import Namespace, ConfigurationManager
 from configman.dotdict import DotDict
 from mock import Mock
@@ -171,9 +171,9 @@ class TestBase(TestCase):
           default=mock.Mock(),
         )
         value = {'storage_classes':
-                    'socorro.unittest.external.test_crashstorage_base.A,'
-                    'socorro.unittest.external.test_crashstorage_base.A,'
-                    'socorro.unittest.external.test_crashstorage_base.B',
+                    'collector.unittest.external.test_crashstorage_base.A,'
+                    'collector.unittest.external.test_crashstorage_base.A,'
+                    'collector.unittest.external.test_crashstorage_base.B',
                  'storage1.y': 37,
                 }
         cm = ConfigurationManager(n, values_source_list=[value])
@@ -281,9 +281,9 @@ class TestBase(TestCase):
           default=mock.Mock(),
         )
         value = {'primary.storage_class':
-                    'socorro.unittest.external.test_crashstorage_base.A',
+                    'collector.unittest.external.test_crashstorage_base.A',
                  'fallback.storage_class':
-                    'socorro.unittest.external.test_crashstorage_base.B',
+                    'collector.unittest.external.test_crashstorage_base.B',
                 }
         cm = ConfigurationManager(
             n,
@@ -416,9 +416,9 @@ class TestBase(TestCase):
           default=mock.Mock(),
         )
         value = {'primary.storage_class':
-                    'socorro.unittest.external.test_crashstorage_base.A',
+                    'collector.unittest.external.test_crashstorage_base.A',
                  'fallback.storage_class':
-                    'socorro.unittest.external.test_crashstorage_base.B',
+                    'collector.unittest.external.test_crashstorage_base.B',
                  'date_threshold': '150315'
                 }
         cm = ConfigurationManager(
@@ -516,9 +516,9 @@ class TestBase(TestCase):
           default=mock.Mock(),
         )
         value = {'primary.storage_class':
-                    'socorro.unittest.external.test_crashstorage_base.A',
+                    'collector.unittest.external.test_crashstorage_base.A',
                  'deferred.storage_class':
-                    'socorro.unittest.external.test_crashstorage_base.B',
+                    'collector.unittest.external.test_crashstorage_base.B',
                   'deferral_criteria': lambda x: x.get('foo') == 'foo'
                 }
         cm = ConfigurationManager(n, values_source_list=[value])
@@ -605,11 +605,11 @@ class TestBase(TestCase):
           default=mock.Mock(),
         )
         value = {'primary.storage_class':
-                    'socorro.unittest.external.test_crashstorage_base.A',
+                    'collector.unittest.external.test_crashstorage_base.A',
                  'deferred.storage_class':
-                    'socorro.unittest.external.test_crashstorage_base.B',
+                    'collector.unittest.external.test_crashstorage_base.B',
                  'processed.storage_class':
-                    'socorro.unittest.external.test_crashstorage_base.B',
+                    'collector.unittest.external.test_crashstorage_base.B',
                   'deferral_criteria': lambda x: x.get('foo') == 'foo'
                 }
         cm = ConfigurationManager(

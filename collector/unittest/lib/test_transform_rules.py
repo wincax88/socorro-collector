@@ -8,8 +8,8 @@ from mock import Mock
 from configman.dotdict import DotDict
 from configman import Namespace
 
-from socorrolib.lib import transform_rules
-from socorrolib.unittest.testbase import TestCase
+from collector.lib import transform_rules
+from collector.unittest.testbase import TestCase
 
 
 def assert_expected(actual, expected):
@@ -116,8 +116,8 @@ class TestTransformRules(TestCase):
         assert_expected(r.action_kwargs, {})
 
         r = transform_rules.TransformRule(
-            'socorrolib.unittest.lib.test_transform_rules.foo', '', '',
-            'socorrolib.unittest.lib.test_transform_rules.bar', '', '')
+            'collector.unittest.lib.test_transform_rules.foo', '', '',
+            'collector.unittest.lib.test_transform_rules.bar', '', '')
         repr_pred = repr(r.predicate)
         assert 'foo' in repr_pred, 'expected "foo" in %s' % repr_pred
         assert_expected(r.predicate_args, ())
@@ -128,10 +128,10 @@ class TestTransformRules(TestCase):
         assert_expected(r.action_kwargs, {})
 
         r = transform_rules.TransformRule(
-            'socorrolib.unittest.lib.test_transform_rules.foo',
+            'collector.unittest.lib.test_transform_rules.foo',
             (1,),
             {'a':13},
-            'socorrolib.unittest.lib.test_transform_rules.bar',
+            'collector.unittest.lib.test_transform_rules.bar',
             '',
             ''
         )
@@ -145,10 +145,10 @@ class TestTransformRules(TestCase):
         assert_expected(r.action_kwargs, {})
 
         r = transform_rules.TransformRule(
-            'socorrolib.unittest.lib.test_transform_rules.foo',
+            'collector.unittest.lib.test_transform_rules.foo',
             '1, 2',
             'a=13',
-            'socorrolib.unittest.lib.test_transform_rules.bar',
+            'collector.unittest.lib.test_transform_rules.bar',
             '',
             ''
         )
@@ -670,17 +670,17 @@ class TestTransformRules(TestCase):
         assert len(config.logger.debug.mock_calls) == 3
         config.logger.debug.assert_any_call(
             'trying to close %s',
-            'socorrolib.unittest.lib.test_transform_rules.'
+            'collector.unittest.lib.test_transform_rules.'
             'TestRuleTestNoCloseMethod'
         )
         config.logger.debug.assert_any_call(
             'trying to close %s',
-            'socorrolib.unittest.lib.test_transform_rules.'
+            'collector.unittest.lib.test_transform_rules.'
             'TestRuleTestDangerous'
         )
         config.logger.debug.assert_any_call(
             '%s has no close',
-            'socorrolib.unittest.lib.test_transform_rules.'
+            'collector.unittest.lib.test_transform_rules.'
             'TestRuleTestNoCloseMethod'
         )
 
@@ -706,6 +706,6 @@ class TestTransformRules(TestCase):
         assert len(config.logger.debug.mock_calls) == 1
         config.logger.debug.assert_any_call(
             'trying to close %s',
-            'socorrolib.unittest.lib.test_transform_rules.'
+            'collector.unittest.lib.test_transform_rules.'
             'TestRuleTestBrokenCloseMethod'
         )

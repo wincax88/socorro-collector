@@ -14,8 +14,8 @@ from contextlib import closing
 
 from configman.dotdict import DotDict
 
-from socorro.collector.wsgi_generic_collector import GenericCollector
-from socorro.unittest.testbase import TestCase
+from collector.wsgi_generic_collector import GenericCollector
+from collector.unittest.testbase import TestCase
 
 
 class ObjectWithValue(object):
@@ -70,10 +70,10 @@ class TestCollectorApp(TestCase):
         eq_(rc.some_field, '23')
         eq_(rc.some_other_field, 'XYZ')
 
-    @mock.patch('socorro.collector.wsgi_generic_collector.time')
-    @mock.patch('socorro.collector.wsgi_generic_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_generic_collector.time')
+    @mock.patch('collector.wsgi_generic_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST(self, mocked_web, mocked_webapi, mocked_utc_now, mocked_time):
         config = self.get_standard_config()
         c = GenericCollector(config)
@@ -116,10 +116,10 @@ class TestCollectorApp(TestCase):
             r[12:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_generic_collector.time')
-    @mock.patch('socorro.collector.wsgi_generic_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_generic_collector.time')
+    @mock.patch('collector.wsgi_generic_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST_with_existing_crash_id(
         self,
         mocked_web,
@@ -169,10 +169,10 @@ class TestCollectorApp(TestCase):
             r[12:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_generic_collector.time')
-    @mock.patch('socorro.collector.wsgi_generic_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_generic_collector.time')
+    @mock.patch('collector.wsgi_generic_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST_with_existing_crash_id_and_use_it(
         self,
         mocked_web,
@@ -224,10 +224,10 @@ class TestCollectorApp(TestCase):
             r[12:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_generic_collector.time')
-    @mock.patch('socorro.collector.wsgi_generic_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.ctx')
+    @mock.patch('collector.wsgi_generic_collector.time')
+    @mock.patch('collector.wsgi_generic_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web.ctx')
     def test_POST_with_gzip(
         self,
         mocked_web_ctx,

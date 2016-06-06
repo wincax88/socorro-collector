@@ -6,18 +6,18 @@ import json
 
 import mock
 
-from socorrolib.lib.util import DotDict
-from socorro.external.boto.connection_context import (
+from collector.lib.util import DotDict
+from collector.external.boto.connection_context import (
     DatePrefixKeyBuilder,
     KeyBuilderBase,
     KeyNotFound,
     S3ConnectionContext,
     RegionalS3ConnectionContext,
 )
-from socorro.database.transaction_executor import (
+from collector.database.transaction_executor import (
     TransactionExecutor,
 )
-import socorro.unittest.testbase
+import collector.unittest.testbase
 
 
 a_raw_crash = {
@@ -49,7 +49,7 @@ a_thing = {
 thing_as_str = json.dumps(a_thing)
 
 
-class ConnectionContextTestCase(socorro.unittest.testbase.TestCase):
+class ConnectionContextTestCase(collector.unittest.testbase.TestCase):
     def setup_mocked_s3_storage(
         self,
         executor=TransactionExecutor,
@@ -229,7 +229,7 @@ class ConnectionContextTestCase(socorro.unittest.testbase.TestCase):
 
 
 
-class MultiplePathsBase(socorro.unittest.testbase.TestCase):
+class MultiplePathsBase(collector.unittest.testbase.TestCase):
     """Sets up mocked s3 storage using DatePrefixKeyBuilder"""
     def setup_mocked_s3_storage(
         self,

@@ -1,5 +1,5 @@
-from socorrolib.unittest.testbase import TestCase
-from socorrolib.unittest import skip_if
+from collector.unittest.testbase import TestCase
+from collector.unittest import skip_if
 
 
 @skip_if(True, 'Impossible!')

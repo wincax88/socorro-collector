@@ -5,11 +5,11 @@
 from nose.tools import eq_, ok_, assert_raises
 from mock import Mock
 
-from socorrolib.app.fetch_transform_save_app import FetchTransformSaveApp
-from socorrolib.lib.threaded_task_manager import ThreadedTaskManager
-from socorrolib.lib.task_manager import TaskManager
-from socorrolib.lib.util import DotDict, SilentFakeLogger
-from socorrolib.unittest.testbase import TestCase
+from collector.app.fetch_transform_save_app import FetchTransformSaveApp
+from collector.lib.threaded_task_manager import ThreadedTaskManager
+from collector.lib.task_manager import TaskManager
+from collector.lib.util import DotDict, SilentFakeLogger
+from collector.unittest.testbase import TestCase
 
 
 class TestFetchTransformSaveApp(TestCase):

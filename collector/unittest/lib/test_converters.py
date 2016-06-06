@@ -7,12 +7,12 @@ from nose.tools import eq_, ok_
 from configman import ConfigurationManager, RequiredConfig, Namespace
 from configman.converters import to_str
 
-from socorrolib.lib.converters import (
+from collector.lib.converters import (
     str_to_classes_in_namespaces_converter,
     change_default,
     web_services_from_str,
 )
-from socorrolib.unittest.testbase import TestCase
+from collector.unittest.testbase import TestCase
 
 #==============================================================================
 # the following two classes are used in test_classes_in_namespaces_converter1
@@ -97,8 +97,8 @@ class TestConverters(TestCase):
             'class_%(name)s'
         )
         class_list_str = (
-            'socorrolib.unittest.lib.test_converters.Foo,'
-            'socorrolib.unittest.lib.test_converters.Bar'
+            'collector.unittest.lib.test_converters.Foo,'
+            'collector.unittest.lib.test_converters.Bar'
         )
         result = converter_fn(class_list_str)
         self.assertTrue(hasattr(result, 'required_config'))
@@ -131,9 +131,9 @@ class TestConverters(TestCase):
         n.add_option(
             'kls_list',
             default=(
-                'socorrolib.unittest.lib.test_converters.Foo, '
-                'socorrolib.unittest.lib.test_converters.Foo, '
-                'socorrolib.unittest.lib.test_converters.Foo'
+                'collector.unittest.lib.test_converters.Foo, '
+                'collector.unittest.lib.test_converters.Foo, '
+                'collector.unittest.lib.test_converters.Foo'
             ),
             from_string_converter= str_to_classes_in_namespaces_converter(
                 '%(name)s_%(index)02d'
@@ -154,9 +154,9 @@ class TestConverters(TestCase):
         n.add_option(
             'kls_list',
             default=(
-                'socorrolib.unittest.lib.test_converters.Alpha, '
-                'socorrolib.unittest.lib.test_converters.Alpha, '
-                'socorrolib.unittest.lib.test_converters.Alpha'
+                'collector.unittest.lib.test_converters.Alpha, '
+                'collector.unittest.lib.test_converters.Alpha, '
+                'collector.unittest.lib.test_converters.Alpha'
             ),
             from_string_converter=str_to_classes_in_namespaces_converter(
                 '%(name)s_%(index)02d'
@@ -167,10 +167,10 @@ class TestConverters(TestCase):
             n,
             [{
                 'kls_list': (
-                    'socorrolib.unittest.lib.test_converters.Alpha, '
-                    'socorrolib.unittest.lib.test_converters.Beta, '
-                    'socorrolib.unittest.lib.test_converters.Beta, '
-                    'socorrolib.unittest.lib.test_converters.Alpha'
+                    'collector.unittest.lib.test_converters.Alpha, '
+                    'collector.unittest.lib.test_converters.Beta, '
+                    'collector.unittest.lib.test_converters.Beta, '
+                    'collector.unittest.lib.test_converters.Alpha'
                 ),
                 'Alpha_00.a': 21,
                 'Beta_01.b': 38,
@@ -191,9 +191,9 @@ class TestConverters(TestCase):
         n.add_option(
             'kls_list',
             default=(
-                'socorrolib.unittest.lib.test_converters.Alpha, '
-                'socorrolib.unittest.lib.test_converters.Alpha, '
-                'socorrolib.unittest.lib.test_converters.Alpha'
+                'collector.unittest.lib.test_converters.Alpha, '
+                'collector.unittest.lib.test_converters.Alpha, '
+                'collector.unittest.lib.test_converters.Alpha'
             ),
             from_string_converter=str_to_classes_in_namespaces_converter(
                 '%(name)s_%(index)02d'
@@ -204,10 +204,10 @@ class TestConverters(TestCase):
             n,
             [{
                 'kls_list': (
-                    'socorrolib.unittest.lib.test_converters.Alpha, '
-                    'socorrolib.unittest.lib.test_converters.Beta, '
-                    'socorrolib.unittest.lib.test_converters.Beta, '
-                    'socorrolib.unittest.lib.test_converters.Alpha'
+                    'collector.unittest.lib.test_converters.Alpha, '
+                    'collector.unittest.lib.test_converters.Beta, '
+                    'collector.unittest.lib.test_converters.Beta, '
+                    'collector.unittest.lib.test_converters.Alpha'
                 ),
                 'Alpha_00.a': 21,
                 'Beta_01.b': 38,
@@ -258,13 +258,13 @@ class TestConverters(TestCase):
                 "name": "collector",
                 "uri": "/submit",
                 "service_implementation_class":
-                "socorrolib.unittest.lib.test_converters.Alpha"
+                "collector.unittest.lib.test_converters.Alpha"
             },
             {
                 "name": "generic",
                 "uri": "/some/other/uri",
                 "service_implementation_class":
-                "socorrolib.unittest.lib.test_converters.Beta"
+                "collector.unittest.lib.test_converters.Beta"
             }
         ]"""
         services_instance = web_services_from_str()(some_services_as_string)

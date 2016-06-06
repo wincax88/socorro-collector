@@ -13,12 +13,12 @@ from contextlib import closing
 
 from configman.dotdict import DotDict
 
-from socorro.collector.wsgi_breakpad_collector import (
+from collector.wsgi_breakpad_collector import (
     BreakpadCollector,
     BreakpadCollector2015
 )
-from socorro.collector.throttler import ACCEPT, IGNORE, DEFER
-from socorro.unittest.testbase import TestCase
+from collector.throttler import ACCEPT, IGNORE, DEFER
+from collector.unittest.testbase import TestCase
 
 
 class ObjectWithValue(object):
@@ -78,10 +78,10 @@ class TestWSGIBreakpadCollector(TestCase):
         eq_(rc.some_field, '23')
         eq_(rc.some_other_field, 'XYZ')
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST(self, mocked_web, mocked_webapi, mocked_utc_now, mocked_time):
         config = self.get_standard_config()
         c = BreakpadCollector(config)
@@ -127,10 +127,10 @@ class TestWSGIBreakpadCollector(TestCase):
             r[11:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST_reject_browser_with_hangid(
         self,
         mocked_web,
@@ -174,10 +174,10 @@ class TestWSGIBreakpadCollector(TestCase):
             c.crash_storage.save_raw_crash.call_count
         )
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST_with_existing_crash_id(
         self,
         mocked_web,
@@ -230,10 +230,10 @@ class TestWSGIBreakpadCollector(TestCase):
             r[11:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST_with_existing_crash_id_and_use_it(
         self,
         mocked_web,
@@ -291,10 +291,10 @@ class TestWSGIBreakpadCollector(TestCase):
             r[11:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST_with_existing_legacy_processing(
         self,
         mocked_web,
@@ -348,10 +348,10 @@ class TestWSGIBreakpadCollector(TestCase):
             r[11:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST_with_existing_legacy_processing_and_use_it(
         self,
         mocked_web,
@@ -409,10 +409,10 @@ class TestWSGIBreakpadCollector(TestCase):
             r[11:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.ctx')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web.ctx')
     def test_POST_with_gzip(
         self,
         mocked_web_ctx,
@@ -561,10 +561,10 @@ class TestWSGIBreakpadCollector2015(TestCase):
         eq_(rc.some_field, '23')
         eq_(rc.some_other_field, 'XYZ')
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST(self, mocked_web, mocked_webapi, mocked_utc_now, mocked_time):
         config = self.get_standard_config()
         c = BreakpadCollector2015(config)
@@ -610,10 +610,10 @@ class TestWSGIBreakpadCollector2015(TestCase):
             r[11:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST_reject_browser_with_hangid(
         self,
         mocked_web,
@@ -657,10 +657,10 @@ class TestWSGIBreakpadCollector2015(TestCase):
             c.crash_storage.save_raw_crash.call_count
         )
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST_with_existing_crash_id(
         self,
         mocked_web,
@@ -713,10 +713,10 @@ class TestWSGIBreakpadCollector2015(TestCase):
             r[11:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST_with_existing_crash_id_and_use_it(
         self,
         mocked_web,
@@ -774,10 +774,10 @@ class TestWSGIBreakpadCollector2015(TestCase):
             r[11:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST_with_existing_legacy_processing(
         self,
         mocked_web,
@@ -831,10 +831,10 @@ class TestWSGIBreakpadCollector2015(TestCase):
             r[11:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web')
     def test_POST_with_existing_legacy_processing_and_use_it(
         self,
         mocked_web,
@@ -892,10 +892,10 @@ class TestWSGIBreakpadCollector2015(TestCase):
             r[11:-1]
         )
 
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.time')
-    @mock.patch('socorro.collector.wsgi_breakpad_collector.utc_now')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.webapi')
-    @mock.patch('socorro.collector.wsgi_generic_collector.web.ctx')
+    @mock.patch('collector.wsgi_breakpad_collector.time')
+    @mock.patch('collector.wsgi_breakpad_collector.utc_now')
+    @mock.patch('collector.wsgi_generic_collector.web.webapi')
+    @mock.patch('collector.wsgi_generic_collector.web.ctx')
     def test_POST_with_gzip(
         self,
         mocked_web_ctx,

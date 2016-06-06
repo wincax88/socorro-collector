@@ -6,13 +6,13 @@ from types import FunctionType
 
 from nose.tools import eq_, ok_
 
-from socorrolib.unittest.testbase import TestCase
+from collector.unittest.testbase import TestCase
 
-from socorrolib.app.generic_app import main
-from socorrolib.app.generic_app import App
+from collector.app.generic_app import main
+from collector.app.generic_app import App
 
-from socorrolib.app.socorro_app import SocorroApp
-from socorrolib.app.socorro_app import App as SApp
+from collector.app.socorro_app import SocorroApp
+from collector.app.socorro_app import App as SApp
 
 
 #==============================================================================

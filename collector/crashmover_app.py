@@ -6,12 +6,12 @@
 
 from configman import Namespace
 
-from socorrolib.app.fetch_transform_save_app import (
+from collector.app.fetch_transform_save_app import (
     FetchTransformSaveApp,
     FetchTransformSaveWithSeparateNewCrashSourceApp,
     main
 )
-from socorro.external.crashstorage_base import (
+from collector.external.crashstorage_base import (
     CrashIDNotFound,
 )
 
@@ -48,14 +48,14 @@ class ProcessedCrashCopierApp(FetchTransformSaveWithSeparateNewCrashSourceApp):
 
         return {
             'source.crashstorage_class':
-                'socorro.external.boto.crashstorage.BotoS3CrashStorage',
+                'collector.external.boto.crashstorage.BotoS3CrashStorage',
             'destination.crashstorage_class':
-                'socorro.external.fs.crashstorage.TarFileCrashStore',
+                'collector.external.fs.crashstorage.TarFileCrashStore',
             'producer_consumer.producer_consumer_class':
-                'socorrolib.lib.task_manager.TaskManager',
+                'collector.lib.task_manager.TaskManager',
             'producer_consumer.quit_on_empty_queue': True,
             'new_crash_source.new_crash_source_class':
-                'socorro.processor.timemachine.PGQueryNewCrashSource'
+                'collector.processor.timemachine.PGQueryNewCrashSource'
         }
 
     #--------------------------------------------------------------------------
@@ -98,9 +98,9 @@ class RawAndProcessedCopierApp(FetchTransformSaveWithSeparateNewCrashSourceApp):
     def get_application_defaults():
         return {
             'source.crashstorage_class':
-                'socorro.external.boto.crashstorage.BotoS3CrashStorage',
+                'collector.external.boto.crashstorage.BotoS3CrashStorage',
             "destination.crashstorage_class":
-                'socorro.external.es.crashstorage.'
+                'collector.external.es.crashstorage.'
                 'ESCrashStorageNoStackwalkerOutput',
         }
 

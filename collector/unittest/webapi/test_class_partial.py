@@ -8,9 +8,9 @@ from contextlib import contextmanager
 
 from configman.dotdict import DotDict, DotDictWithAcquisition
 
-from socorro.unittest.testbase import TestCase
+from collector.unittest.testbase import TestCase
 
-from socorro.webapi.class_partial import class_with_partial_init
+from collector.webapi.class_partial import class_with_partial_init
 
 
 #==============================================================================

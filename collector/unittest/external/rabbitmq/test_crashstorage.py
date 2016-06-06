@@ -4,16 +4,16 @@ from nose.tools import eq_, ok_
 
 from socket import timeout
 
-from socorro.external.rabbitmq.crashstorage import (
+from collector.external.rabbitmq.crashstorage import (
     RabbitMQCrashStorage,
 )
-from socorrolib.lib.util import DotDict
-from socorro.database.transaction_executor import (
+from collector.lib.util import DotDict
+from collector.database.transaction_executor import (
     TransactionExecutorWithInfiniteBackoff,
     TransactionExecutor
 )
-from socorro.external.crashstorage_base import Redactor
-from socorro.unittest.testbase import TestCase
+from collector.external.crashstorage_base import Redactor
+from collector.unittest.testbase import TestCase
 
 
 class TestCrashStorage(TestCase):
@@ -79,7 +79,7 @@ class TestCrashStorage(TestCase):
         )
         ok_(not crash_store.transaction.called)
 
-    @patch('socorro.external.rabbitmq.crashstorage.randint')
+    @patch('collector.external.rabbitmq.crashstorage.randint')
     def test_save_raw_crash_normal_throttle(self, randint_mock):
         random_ints = [100, 49, 50, 51, 1, 100]
         def side_effect(*args, **kwargs):

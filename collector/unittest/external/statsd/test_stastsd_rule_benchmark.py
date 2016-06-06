@@ -4,25 +4,25 @@
 
 from mock import patch, call, Mock
 from nose.tools import eq_, ok_, assert_raises
-from socorro.unittest.testbase import TestCase
+from collector.unittest.testbase import TestCase
 
 from datetime import datetime
 
 from configman.dotdict import DotDict
 
-from socorro.external.statsd.statsd_rule_benchmark import (
+from collector.external.statsd.statsd_rule_benchmark import (
     StatsdRuleBenchmarkWrapper,
     CountAnythingRuleBase,
     CountStackWalkerTimeoutKills,
     CountStackWalkerFailures,
 )
-from socorro.external.statsd.statsd_base import StatsdCounter
-from socorrolib.unittest.lib.test_transform_rules import (
+from collector.external.statsd.statsd_base import StatsdCounter
+from collector.unittest.lib.test_transform_rules import (
     TestRuleTestLaughable,
     TestRuleTestDangerous
 )
-from socorrolib.lib import transform_rules
-from socorro.external.statsd.dogstatsd import StatsClient
+from collector.lib import transform_rules
+from collector.external.statsd.dogstatsd import StatsClient
 
 #==============================================================================
 class TestStatsdCounterRule(TestCase):
@@ -68,7 +68,7 @@ class TestStatsdCounterRule(TestCase):
         return config
 
     #--------------------------------------------------------------------------
-    @patch('socorro.external.statsd.dogstatsd.statsd')
+    @patch('collector.external.statsd.dogstatsd.statsd')
     def test_apply_all(self, statsd_obj):
         config = self.setup_config('processor')
         trs = transform_rules.TransformRuleSystem(config)
@@ -78,7 +78,7 @@ class TestStatsdCounterRule(TestCase):
         ok_(isinstance(trs.rules[1], StatsdRuleBenchmarkWrapper))
         ok_(isinstance(trs.rules[1].wrapped_object, TestRuleTestDangerous))
 
-        now_str = 'socorro.external.statsd.statsd_base.datetime'
+        now_str = 'collector.external.statsd.statsd_base.datetime'
         with patch(now_str) as now_mock:
             times =  [
                 datetime(2015, 5, 4, 15, 10, 3),
@@ -106,7 +106,7 @@ class TestStatsdCounterRule(TestCase):
 #==============================================================================
 class TestStatsdCountAnythingRule(TestStatsdCounterRule):
 
-    @patch('socorro.external.statsd.dogstatsd.statsd')
+    @patch('collector.external.statsd.dogstatsd.statsd')
     def testCountAnythingRuleBase(self, statsd_obj):
         config = DotDict()
         config.counter_class = Mock()
@@ -142,7 +142,7 @@ class TestStatsdCountAnythingRule(TestStatsdCounterRule):
             'dwight'
         )
 
-    @patch('socorro.external.statsd.dogstatsd.statsd')
+    @patch('collector.external.statsd.dogstatsd.statsd')
     def testCountStackWalkerTimeoutKills_success(self, statsd_obj):
         config = DotDict()
         config.counter_class = Mock()
@@ -186,7 +186,7 @@ class TestStatsdCountAnythingRule(TestStatsdCounterRule):
             'stackwalker_timeout_kills'
         )
 
-    @patch('socorro.external.statsd.dogstatsd.statsd')
+    @patch('collector.external.statsd.dogstatsd.statsd')
     def testCountStackWalkerTimeoutKills_fail(self, statsd_obj):
         config = DotDict()
         config.counter_class = Mock()
@@ -219,7 +219,7 @@ class TestStatsdCountAnythingRule(TestStatsdCounterRule):
             )
         )
 
-    @patch('socorro.external.statsd.dogstatsd.statsd')
+    @patch('collector.external.statsd.dogstatsd.statsd')
     def testCountStackWalkerFailures_success(self, statsd_obj):
         config = DotDict()
         config.counter_class = Mock()
@@ -263,7 +263,7 @@ class TestStatsdCountAnythingRule(TestStatsdCounterRule):
             'stackwalker_timeout_kills'
         )
 
-    @patch('socorro.external.statsd.dogstatsd.statsd')
+    @patch('collector.external.statsd.dogstatsd.statsd')
     def testCountStackWalkerFailures_fail(self, statsd_obj):
         config = DotDict()
         config.counter_class = Mock()

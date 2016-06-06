@@ -16,7 +16,7 @@ class RMQNewCrashSource(RequiredConfig):
     required_config.add_option(
         'crashstorage_class',
         doc='the source storage class',
-        default='socorro.external.rabbitmq.crashstorage.RabbitMQCrashStorage',
+        default='collector.external.rabbitmq.crashstorage.RabbitMQCrashStorage',
         from_string_converter=class_converter
     )
 

@@ -5,7 +5,7 @@
 import web
 import os
 
-from socorro.webapi.class_partial import class_with_partial_init
+from collector.webapi.class_partial import class_with_partial_init
 
 from configman import Namespace, RequiredConfig
 
@@ -99,38 +99,3 @@ class WSGIServer(WebServerBase):
         return os.path.abspath(config_path)
 
 ApacheModWSGI = WSGIServer  # for backwards compatiblity
-
-
-#==============================================================================
-class StandAloneServer(WebServerBase):
-    required_config = Namespace()
-    required_config.add_option(
-        'port',
-        doc='the port to listen to for submissions',
-        default=8882
-    )
-
-
-#==============================================================================
-class CherryPy(StandAloneServer):
-    required_config = Namespace()
-    required_config.add_option(
-        'ip_address',
-        doc='the IP address from which to accept submissions',
-        default='127.0.0.1'
-    )
-
-    #--------------------------------------------------------------------------
-    def run(self):
-        web.runsimple(
-            self._wsgi_func,
-            (self.config.web_server.ip_address, self.config.web_server.port)
-        )
-
-    #--------------------------------------------------------------------------
-    def _identify(self):
-        self.config.logger.info(
-            'this is CherryPy from web.py running standalone at %s:%d',
-            self.config.web_server.ip_address,
-            self.config.web_server.port
-        )

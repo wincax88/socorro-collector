@@ -4,13 +4,13 @@
 
 import json
 
-from socorro.external.crashstorage_base import (
+from collector.external.crashstorage_base import (
     CrashStorageBase,
     CrashIDNotFound,
     MemoryDumpsMapping,
 )
-from socorrolib.lib.util import DotDict
-from socorrolib.lib.converters import change_default
+from collector.lib.util import DotDict
+from collector.lib.converters import change_default
 
 from configman import Namespace
 from configman.converters import class_converter, py_obj_to_str
@@ -24,14 +24,14 @@ class BotoCrashStorage(CrashStorageBase):
     required_config = Namespace()
     required_config.add_option(
         "resource_class",
-        default='socorro.external.boto.connection_context.ConnectionContextBase',
+        default='collector.external.boto.connection_context.ConnectionContextBase',
         doc="fully qualified dotted Python classname to handle Boto connections",
         from_string_converter=class_converter,
         reference_value_from='resource.boto'
     )
     required_config.add_option(
         'transaction_executor_class_for_get',
-        default="socorro.database.transaction_executor."
+        default="collector.database.transaction_executor."
         "TransactionExecutorWithLimitedBackoff",
         doc='a class that will manage transactions',
         from_string_converter=class_converter,
@@ -39,7 +39,7 @@ class BotoCrashStorage(CrashStorageBase):
     )
     required_config.add_option(
         'transaction_executor_class',
-        default="socorro.database.transaction_executor."
+        default="collector.database.transaction_executor."
         "TransactionExecutorWithLimitedBackoff",
         doc='a class that will manage transactions',
         from_string_converter=class_converter,
@@ -267,7 +267,7 @@ class BotoS3CrashStorage(BotoCrashStorage):
     required_config.resource_class = change_default(
         BotoCrashStorage,
         'resource_class',
-        'socorro.external.boto.connection_context.RegionalS3ConnectionContext'
+        'collector.external.boto.connection_context.RegionalS3ConnectionContext'
     )
 
 

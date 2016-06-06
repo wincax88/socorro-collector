@@ -5,14 +5,14 @@
 from mock import Mock, MagicMock
 from nose.tools import eq_, ok_
 
-from socorro.external.crashstorage_base import (
+from collector.external.crashstorage_base import (
     Redactor,
 )
-from socorro.external.rabbitmq.crashstorage import (
+from collector.external.rabbitmq.crashstorage import (
     ReprocessingOneRabbitMQCrashStore,
 )
-from socorro.external.rabbitmq.connection_context import ConnectionContext
-from socorro.unittest.testbase import TestCase
+from collector.external.rabbitmq.connection_context import ConnectionContext
+from collector.unittest.testbase import TestCase
 
 from configman.dotdict import DotDict
 

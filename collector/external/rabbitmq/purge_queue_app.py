@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from configman import Namespace, class_converter
-from socorrolib.app.socorro_app import App
+from collector.app.socorro_app import App
 FAIL = 1
 SUCCESS = 0
 
@@ -18,7 +18,7 @@ class PurgeRabbitMQQueueApp(App):
     required_config.add_option(
         'rabbitmq_class',
         default=
-            'socorro.external.rabbitmq.connection_context.ConnectionContext',
+            'collector.external.rabbitmq.connection_context.ConnectionContext',
         doc='the class responsible for connecting to RabbitMQ',
         from_string_converter=class_converter,
         reference_value_from='resource.rabbitmq',

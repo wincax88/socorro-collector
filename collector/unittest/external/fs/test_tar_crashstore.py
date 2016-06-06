@@ -11,13 +11,13 @@ from os.path import join
 
 from configman.dotdict import DotDict
 
-from socorro.external.fs.crashstorage import (
+from collector.external.fs.crashstorage import (
     TarFileWritingCrashStore,
     TarFileSequentialReadingCrashStore,
     dates_to_strings_for_json
 )
-from socorro.external.crashstorage_base import Redactor
-from socorro.unittest.testbase import TestCase
+from collector.external.crashstorage_base import Redactor
+from collector.unittest.testbase import TestCase
 
 TEMP_DIR = tempfile.gettempdir()
 

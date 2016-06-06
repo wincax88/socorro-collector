@@ -32,8 +32,8 @@ from functools import partial
 from configman import Namespace
 from configman.converters import class_converter
 
-from socorrolib.lib.task_manager import respond_to_SIGTERM
-from socorrolib.app.generic_app import App, main  # main not used here, but
+from collector.lib.task_manager import respond_to_SIGTERM
+from collector.app.generic_app import App, main  # main not used here, but
                                                # is imported from generic_app
                                                # into this scope to offer to
                                                # apps that derive from the
@@ -76,7 +76,7 @@ class FetchTransformSaveApp(App):
     required_config.producer_consumer.add_option(
         'producer_consumer_class',
         doc='the class implements a threaded producer consumer queue',
-        default='socorrolib.lib.threaded_task_manager.ThreadedTaskManager',
+        default='collector.lib.threaded_task_manager.ThreadedTaskManager',
         from_string_converter=class_converter
     )
     required_config.add_option(
@@ -101,9 +101,9 @@ class FetchTransformSaveApp(App):
 
         return {
             'source.crashstorage_class':
-            'socorro.external.fs.crashstorage.FSPermanentStorage',
+            'collector.external.fs.crashstorage.FSPermanentStorage',
             'destination.crashstorage_class':
-            'socorro.external.fs.crashstorage.FSPermanentStorage',
+            'collector.external.fs.crashstorage.FSPermanentStorage',
         }
 
     #--------------------------------------------------------------------------

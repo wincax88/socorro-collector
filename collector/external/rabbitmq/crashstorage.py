@@ -15,12 +15,12 @@ from configman import (
     class_converter
 )
 from configman.dotdict import DotDict
-from socorrolib.lib.converters import change_default
-from socorro.external.rabbitmq.connection_context import (
+from collector.lib.converters import change_default
+from collector.external.rabbitmq.connection_context import (
     ConnectionContext,
     ConnectionContextPooled,
 )
-from socorro.external.crashstorage_base import CrashStorageBase
+from collector.external.crashstorage_base import CrashStorageBase
 
 
 #==============================================================================
@@ -51,7 +51,7 @@ class RabbitMQCrashStorage(CrashStorageBase):
     )
     required_config.add_option(
         'transaction_executor_class',
-        default="socorro.database.transaction_executor."
+        default="collector.database.transaction_executor."
                 "TransactionExecutorWithInfiniteBackoff",
         doc='a class that will manage transactions',
         from_string_converter=class_converter,

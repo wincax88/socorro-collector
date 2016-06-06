@@ -5,7 +5,7 @@
 # this is a temporary hack to coerse the middleware to talk to boto S3
 # instead of HBase.
 
-from socorro.external.crash_data_base import CrashDataBase
+from collector.external.crash_data_base import CrashDataBase
 
 
 class CrashData(CrashDataBase):

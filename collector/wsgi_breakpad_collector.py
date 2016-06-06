@@ -4,10 +4,10 @@
 
 import time
 
-from socorrolib.lib.ooid import createNewOoid
-from socorro.collector.throttler import DISCARD, IGNORE
-from socorrolib.lib.datetimeutil import utc_now
-from socorro.collector.wsgi_generic_collector import GenericCollectorBase
+from collector.lib.ooid import createNewOoid
+from collector.throttler import DISCARD, IGNORE
+from collector.lib.datetimeutil import utc_now
+from collector.wsgi_generic_collector import GenericCollectorBase
 
 from configman import Namespace, class_converter
 
@@ -151,7 +151,7 @@ class BreakpadCollector2015(BreakpadCollectorBase):
     required_config.namespace('throttler')
     required_config.throttler.add_option(
         'throttler_class',
-        default='socorro.collector.throttler.LegacyThrottler',
+        default='collector.throttler.LegacyThrottler',
         doc='the class that implements the throttling action',
         from_string_converter=class_converter
     )
@@ -163,7 +163,7 @@ class BreakpadCollector2015(BreakpadCollectorBase):
     required_config.storage.add_option(
         'crashstorage_class',
         doc='the source storage class',
-        default='socorro.external.fs.crashstorage'
+        default='collector.external.fs.crashstorage'
                 '.FSLegacyDatedRadixTreeStorage',
         from_string_converter=class_converter
     )

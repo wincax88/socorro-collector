@@ -6,13 +6,13 @@
 """the collector recieves crashes from the field"""
 
 # This app can be invoked like this:
-#     .../socorro/collector/collector_app.py --help
+#     .../collector/collector_app.py --help
 # replace the ".../" with something that makes sense for your environment
 # set both socorro and configman in your PYTHONPATH
 
-from socorrolib.app.generic_app import App, main
-from socorro.webapi.class_partial import class_with_partial_init
-from socorrolib.lib.converters import web_services_from_str
+from collector.app.generic_app import App, main
+from collector.webapi.class_partial import class_with_partial_init
+from collector.lib.converters import web_services_from_str
 
 from configman import Namespace
 from configman.converters import class_converter
@@ -41,7 +41,7 @@ class BaseCollectorApp(App):
     required_config.web_server.add_option(
         'wsgi_server_class',
         doc='a class implementing a wsgi web server',
-        default='socorro.webapi.servers.CherryPy',
+        default='collector.webapi.servers.WSGIServer',
         from_string_converter=class_converter
     )
 
@@ -64,7 +64,7 @@ class CollectorApp(BaseCollectorApp):
     required_config.namespace('collector')
     required_config.collector.add_option(
         'collector_class',
-        default='socorro.collector.wsgi_breakpad_collector.BreakpadCollector',
+        default='collector.wsgi_breakpad_collector.BreakpadCollector',
         doc='the name of the class that handles collection',
         from_string_converter=class_converter
     )
@@ -76,7 +76,7 @@ class CollectorApp(BaseCollectorApp):
     required_config.namespace('throttler')
     required_config.throttler.add_option(
         'throttler_class',
-        default='socorro.collector.throttler.LegacyThrottler',
+        default='collector.throttler.LegacyThrottler',
         doc='the class that implements the throttling action',
         from_string_converter=class_converter
     )
@@ -88,7 +88,7 @@ class CollectorApp(BaseCollectorApp):
     required_config.storage.add_option(
         'crashstorage_class',
         doc='the source storage class',
-        default='socorro.external.fs.crashstorage'
+        default='collector.external.fs.crashstorage'
                 '.FSLegacyDatedRadixTreeStorage',
         from_string_converter=class_converter
     )
@@ -137,13 +137,13 @@ class Collector2015App(BaseCollectorApp):
             "name": "collector",
             "uri": "/submit",
             "service_implementation_class":
-            "socorro.collector.wsgi_breakpad_collector.BreakpadCollector2015"
+            "collector.wsgi_breakpad_collector.BreakpadCollector2015"
         },
         {
             "name": "generic",
             "uri": "/some/other/uri",
             "service_implementation_class":
-                "socorro.collector.wsgi_generic_collector.GenericCollector"
+                "collector.wsgi_generic_collector.GenericCollector"
         }
         ]''',
         doc='json-like list of services to be offered by this collector:'

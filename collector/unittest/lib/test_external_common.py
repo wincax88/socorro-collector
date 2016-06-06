@@ -7,8 +7,8 @@ import datetime
 import isodate
 from nose.tools import eq_, ok_, assert_raises
 
-from socorrolib.lib import BadArgumentError, external_common, util
-from socorrolib.unittest.testbase import TestCase
+from collector.lib import BadArgumentError, external_common, util
+from collector.unittest.testbase import TestCase
 
 
 #==============================================================================
