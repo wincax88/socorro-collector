@@ -25,11 +25,31 @@ Install
       If you plan on doing development, clone your fork of the repo
       instead.
 
-2. Install with pip >= 8:
+2. Create a virtualenv:
 
    .. code-block:: shell
 
       $ mkvirtualenv collector
+
+3. Install pip 8.0.3 in the collector virtualenv:
+
+   .. code-block:: shell
+
+      $ ./scripts/pipstrap.py
+
+4. Install requirements and socorro-collector in the collector virtualenv.
+
+   For production:
+
+   .. code-block:: shell
+
+      $ pip install --require-hashes -r requirements.txt
+      $ pip install .
+
+   For development:
+
+   .. code-block:: shell
+
       $ pip install --require-hashes -r requirements-dev.txt
       $ pip install -e .
 
@@ -43,4 +63,10 @@ FIXME
 Running tests
 -------------
 
-FIXME
+Run in the collector virtualenv:
+
+.. code-block:: shell
+
+   $ ./scripts/test.sh
+
+This runs nosetests. It'll pass any arguments you provide to nose.
