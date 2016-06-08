@@ -11,13 +11,15 @@ services:
       - ./crashes:/crashes
 
   collector:
-    <<: *collectorbase
+    extends:
+      service: collectorbase
     ports:
       - "8000:8000"
     command: ./run_gunicorn.sh
 
   crashmover:
-    <<: *collectorbase
+    extends:
+      service: collectorbase
     command: ./run_crashmover.sh
     links:
       - rabbitmq

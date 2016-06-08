@@ -34,4 +34,7 @@ docs:
 	$(MAKE) -C docs/ clean
 	$(MAKE) -C docs/ html
 
+run:
+	docker-compose up
+
 .PHONY: default clean build docs test
