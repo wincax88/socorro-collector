@@ -1,5 +1,7 @@
 -r requirements.txt
 
+coverage==4.1 \
+    --hash=sha256:41632b5e2c0ec510e4c0f1f0f02a702477d1f837693964390553539217c92b07
 flake8==2.5.2 \
     --hash=sha256:07bbc7bfb6a35fbb973851a6465f8d94768f5e73f0c4fd4789f886834055c484 \
     --hash=sha256:3dbee9045b68ed19e35fbe9da58f3407debcad16eca38b36f78dd695eca4ca6c
