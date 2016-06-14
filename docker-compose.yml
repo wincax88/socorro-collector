@@ -1,29 +1,29 @@
 # docker-compose for socorro-collector
 # Note: Requires docker 1.10.0+ and docker-compose 1.6.0+.
-version: '2'
+version: "2"
 services:
-  collectorbase: &collectorbase
+  appbase:
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - .:/app
-      - ./crashes:/crashes
+      - crashes:/crashes
 
   collector:
     extends:
-      service: collectorbase
+      service: appbase
     ports:
       - "8000:8000"
-    command: ./run_gunicorn.sh
+    command: ./scripts/run_web.sh
 
   crashmover:
     extends:
-      service: collectorbase
-    command: ./run_crashmover.sh
+      service: appbase
     links:
       - rabbitmq
       - minio
+    command: ./scripts/run_crashmover.sh
 
   # FIXME: do statsd
   # statsd:
@@ -36,6 +36,7 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=rabbituser
       - RABBITMQ_DEFAULT_PASS=rabbitpwd
+      - RABBITMQ_DEFAULT_VHOST=rabbitvhost
 
   minio:
     # https://hub.docker.com/r/minio/minio/
@@ -45,3 +46,6 @@ services:
     environment:
       - MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
       - MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+volumes:
+  crashes:

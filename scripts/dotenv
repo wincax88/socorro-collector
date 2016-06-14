@@ -1,0 +1,19 @@
+#!/bin/bash
+
+IFS='
+'
+
+if [ "$#" == "0" ]; then
+    echo "Usage: dotenv <ENVFILE> <CMD...>";
+    exit 1;
+fi
+
+ENVFILE="$1"
+shift;
+
+if [ ! -e "${ENVFILE}" ]; then
+    echo "File ${ENVFILE} does not exist. Exiting...";
+    exit 1;
+fi
+
+env $(cat ${ENVFILE} | sed '/^#/d') $@

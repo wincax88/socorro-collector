@@ -1,3 +1,5 @@
+DOCKERCOMPOSE = $(shell which docker-compose)
+
 default:
 	@echo "You need to specify a subcommand."
 	@exit 1
@@ -10,9 +12,10 @@ help:
 	@echo "install - install the package to the active Python's site-packages"
 
 build:
-	docker-compose build
+	${DOCKERCOMPOSE} build
 
 clean:
+	# python related things
 	rm -fr build/
 	rm -fr dist/
 	rm -fr .eggs/
@@ -23,8 +26,18 @@ clean:
 	find . -name '*.pyo' -exec rm -f {} +
 	find . -name '__pycache__' -exec rm -fr {} +
 	
+	# test related things
 	rm -f .coverage
-	rm -fr htmlcov/
+	rm -fr cover/
+
+	# container-built things
+	${DOCKERCOMPOSE} run appbase rm -rf crashes
+
+test:
+	${DOCKERCOMPOSE} run appbase ./scripts/test.sh
+
+coverage:
+	${DOCKERCOMPOSE} run appbase ./scripts/test.sh --with-coverage --cover-package=collector --cover-html
 
 lint:
 	flake8 collector tests
@@ -35,6 +48,6 @@ docs:
 	$(MAKE) -C docs/ html
 
 run:
-	docker-compose up
+	${DOCKERCOMPOSE} up
 
 .PHONY: default clean build docs test
