@@ -10,7 +10,7 @@ services:
       - .:/app
       - crashes:/crashes
 
-  collector:
+  web:
     extends:
       service: appbase
     ports:

@@ -11,8 +11,38 @@ Prototype extracted Socorro breakpad crash collector.
 Quickstart
 ==========
 
-Install
--------
+Install (dev)
+-------------
+
+1. Clone the repository:
+
+   .. code-block:: shell
+
+      $ git clone https://github.com/<YOUR-FORK>/socorro-collector
+
+2. Install docker and docker-compose
+
+3. Build:
+
+   .. code-block:: shell
+
+      $ make build
+
+4. Run:
+
+   .. code-block:: shell
+
+      $ make run
+
+5. Run tests:
+
+   .. code-block:: shell
+
+      $ make test
+
+
+Install (production)
+--------------------
 
 1. Clone the repo:
 
@@ -20,12 +50,7 @@ Install
 
       $ git clone https://github.com/willkg/socorro-collector
 
-   .. Note::
-
-      If you plan on doing development, clone your fork of the repo
-      instead.
-
-2. Create a virtualenv:
+2. Create a virtualenv with Python 2.7:
 
    .. code-block:: shell
 
@@ -37,27 +62,26 @@ Install
 
       $ ./scripts/pipstrap.py
 
-4. Install requirements and socorro-collector in the collector virtualenv.
-
-   For production:
+4. Install requirements and socorro-collector in the collector virtualenv:
 
    .. code-block:: shell
 
       $ pip install --require-hashes -r requirements.txt
       $ pip install .
 
-   For development:
+5. Configure the collector.
+
+6. Run the web app:
 
    .. code-block:: shell
 
-      $ pip install --require-hashes -r requirements-dev.txt
-      $ pip install -e .
+      $ ./scripts/dotenv <ENV-FILE> gunicorn collector.wsgi --log-file -
 
+7. Run the crashmover:
 
-Running in a dev environment
-----------------------------
+   .. code-block:: shell
 
-FIXME
+      $ ./scripts/dotenv <ENV-FILE> ./scripts/socorro collector.crashmover_app.CrashMoverApp
 
 
 Running tests

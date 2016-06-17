@@ -13,10 +13,14 @@ help:
 	@echo "test-coverage - run tests and generate coverage report in cover/"
 	@echo "docs - generate Sphinx HTML documentation, including API docs"
 
+.docker-build:
+	make build
+
 build:
 	${DOCKERCOMPOSE} build
+	touch .docker-build
 
-run:
+run: .docker-build
 	${DOCKERCOMPOSE} up
 
 clean:
@@ -36,6 +40,9 @@ clean:
 	# test related things
 	rm -f .coverage
 	rm -fr cover/
+
+	# state file
+	rm .docker-build
 
 lint:
 	${DOCKERCOMPOSE} run appbase flake8 collector tests
