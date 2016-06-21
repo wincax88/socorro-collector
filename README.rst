@@ -113,10 +113,12 @@ FIXME: This may not be right.
 
    .. code-block:: shell
 
-      $ ./scripts/dotenv <ENV-FILE> gunicorn collector.wsgi --log-file -
+      # Populate environment with necessary configuration.
+      $ gunicorn collector.wsgi --log-file -
 
 7. Run the crashmover:
 
    .. code-block:: shell
 
-      $ ./scripts/dotenv <ENV-FILE> ./scripts/socorro collector.crashmover_app.CrashMoverApp
+      # Populate environment with necessary configuration.
+      $ ./scripts/socorro collector.crashmover_app.CrashMoverApp
