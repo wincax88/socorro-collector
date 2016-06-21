@@ -34,15 +34,53 @@ Install (dev)
 
       $ make run
 
+
+   In another terminal, you can verify that the containers are running:
+
+   .. code-block:: shell
+
+      $ docker ps
+
+
+   You can send a crash report into the system and watch it go through the
+   steps:
+
+   .. code-block:: shell
+
+      $ ./scripts/send_crash_report.sh
+
+
+   You should get a CrashID back from the HTTP POST and also be able to follow
+   the crash through the docker-compose output.
+
+   .. Note::
+
+      This currently sets up a docker environment that's prod-like and uses
+      ``config/prod.env``. We want to support other configurations, but I
+      haven't figured out a good way of specifying which environment to use
+      which affects containers and configuration and other things. Maybe
+      multiple compose files?
+
 5. Run tests:
 
    .. code-block:: shell
 
       $ make test
 
+   If you need to run specific tests or pass in different arguments, you can
+   do:
+
+   .. code-block:: shell
+
+      $ docker-compose run appbase ./scripts/test.sh [ARGS]
+
+   All ARGS are pass directly to nosetests.
+
 
 Install (production)
 --------------------
+
+FIXME: This may not be right.
 
 1. Clone the repo:
 
@@ -82,15 +120,3 @@ Install (production)
    .. code-block:: shell
 
       $ ./scripts/dotenv <ENV-FILE> ./scripts/socorro collector.crashmover_app.CrashMoverApp
-
-
-Running tests
--------------
-
-Run in the collector virtualenv:
-
-.. code-block:: shell
-
-   $ ./scripts/test.sh
-
-This runs nosetests. It'll pass any arguments you provide to nose.
