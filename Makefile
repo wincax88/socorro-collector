@@ -30,7 +30,7 @@ clean-test:
 	rm -fr htmlcov/
 
 lint:
-	flake8 collector tests
+	${DOCKERCOMPOSE} run appbase flake8 collector tests
 
 test:
 	py.test
