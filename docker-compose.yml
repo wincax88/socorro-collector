@@ -18,8 +18,6 @@ services:
     command: ./scripts/run_web.sh
 
   crashmover:
-    environment:
-      - S3_USE_SIGV4=True
     extends:
       service: appbase
     links:

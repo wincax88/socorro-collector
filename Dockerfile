@@ -15,10 +15,6 @@ RUN yum -y install epel-release \
 COPY scripts/pipstrap.py scripts/pipstrap.py
 RUN ./scripts/pipstrap.py
 
-# Copy boto configuration
-# FIXME: This might screw things up for non prod-local configurations
-COPY config/boto-dist /root/.boto
-
 # Install the app
 COPY . /app/
 WORKDIR /app/

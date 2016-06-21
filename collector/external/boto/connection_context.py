@@ -359,11 +359,6 @@ class RegionalS3ConnectionContext(S3ConnectionContext):
         return self.connection
 
 
-# FIXME: Move this elsewhere.
-from boto.auth import S3HmacAuthV4Handler
-S3HmacAuthV4Handler.determine_region_name = lambda self, host: 'us-east-1'
-
-
 class HostPortS3ConnectionContext(S3ConnectionContext):
     """an alternative base class that specific implementations of Boto
     connection can derive.  It adds "host" and "port" to the configuration"""
