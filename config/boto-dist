@@ -1,0 +1,3 @@
+[s3]
+use-sigv4 = True
+region_name = ""

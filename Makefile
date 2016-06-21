@@ -25,7 +25,7 @@ run: .docker-build
 
 clean:
 	# container-built things
-	${DOCKERCOMPOSE} run appbase rm -rf crashes
+	${DOCKERCOMPOSE} run appbase rm -rf /crashes
 
 	# python related things
 	rm -fr build/

@@ -18,11 +18,13 @@ services:
     command: ./scripts/run_web.sh
 
   crashmover:
+    environment:
+      - S3_USE_SIGV4=True
     extends:
       service: appbase
     links:
       - rabbitmq
-      - minio
+      - fakes3
     command: ./scripts/run_crashmover.sh
 
   # FIXME: do statsd
@@ -38,14 +40,11 @@ services:
       - RABBITMQ_DEFAULT_PASS=rabbitpwd
       - RABBITMQ_DEFAULT_VHOST=rabbitvhost
 
-  minio:
-    # https://hub.docker.com/r/minio/minio/
-    image: minio/minio
+  fakes3:
+    # https://hub.docker.com/r/lphoward/fake-s3/
+    image: lphoward/fake-s3
     ports:
-      - "9000:9000"
-    environment:
-      - MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE
-      - MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+      - "4569:4569"
 
 volumes:
   crashes:
