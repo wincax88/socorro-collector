@@ -8,10 +8,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file: config/prod.env
+    env_file: config/dev.env
     volumes:
       - .:/app
-      - crashes:/crashes
+      - devcrashes:/devcrashes
 
   web:
     extends:
@@ -20,32 +20,5 @@ services:
       - "8000:8000"
     command: ./scripts/run_web.sh
 
-  crashmover:
-    extends:
-      service: appbase
-    links:
-      - rabbitmq
-      - fakes3
-    command: ./scripts/run_crashmover.sh
-
-  # FIXME: do statsd
-  # statsd:
-
-  rabbitmq:
-    # https://hub.docker.com/_/rabbitmq/
-    # FIXME: pin this to the version of rabbitmq we're using in -stage
-    # and -prod
-    image: rabbitmq
-    environment:
-      - RABBITMQ_DEFAULT_USER=rabbituser
-      - RABBITMQ_DEFAULT_PASS=rabbitpwd
-      - RABBITMQ_DEFAULT_VHOST=rabbitvhost
-
-  fakes3:
-    # https://hub.docker.com/r/lphoward/fake-s3/
-    image: lphoward/fake-s3
-    ports:
-      - "4569:4569"
-
 volumes:
-  crashes:
+  devcrashes:

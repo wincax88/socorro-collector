@@ -77,6 +77,11 @@ Install (dev)
    All ARGS are pass directly to nosetests.
 
 
+The build and run steps use the dev configuration. You can also use the
+production configuration akin to what we use for Mozilla Crash Stats in
+production by using the ``build-prod`` and ``run-prod`` make rules.
+
+
 Install (production)
 --------------------
 
