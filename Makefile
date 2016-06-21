@@ -25,6 +25,7 @@ run: .docker-build
 
 clean:
 	# container-built things
+	# FIXME: This might not work
 	${DOCKERCOMPOSE} run appbase rm -rf /crashes
 
 	# python related things
@@ -54,6 +55,7 @@ test-coverage:
 	${DOCKERCOMPOSE} run appbase ./scripts/test.sh --with-coverage --cover-package=collector --cover-html
 
 docs:
+	# FIXME: This might not work
 	sphinx-apidoc -o docs/ collector
 	$(MAKE) -C docs/ clean
 	$(MAKE) -C docs/ html
