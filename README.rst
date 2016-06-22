@@ -28,7 +28,7 @@ Install (dev)
 
       $ make build
 
-4. Run:
+4. Run with a simple development configuration:
 
    .. code-block:: shell
 
@@ -65,21 +65,12 @@ Install (dev)
       CrashID=bp-6c43aa7c-7d34-41cf-85aa-55b0d2160622
       *  Closing connection 0
 
-
    You should get a CrashID back from the HTTP POST. You'll also see docker
    logging output something like this::
 
       web_1  | 2016-06-22 15:19:49,040 INFO - collector -  - MainThread - 8f63752c-57c6-4e5d-b2cf-cabde2160622 received
       web_1  | 2016-06-22 15:19:49,040 DEBUG - collector -  - MainThread - not throttled Test 1.0
       web_1  | 2016-06-22 15:19:49,042 INFO - collector -  - MainThread - 8f63752c-57c6-4e5d-b2cf-cabde2160622 accepted
-
-   .. Note::
-
-      This currently sets up a docker environment that's prod-like and uses
-      ``config/prod.env``. We want to support other configurations, but I
-      haven't figured out a good way of specifying which environment to use
-      which affects containers and configuration and other things. Maybe
-      multiple compose files?
 
    When you're done with the process, hit CTRL-C to gracefully kill the docker container.
 
@@ -113,7 +104,7 @@ FIXME: This may not be right.
 
    .. code-block:: shell
 
-      $ git clone https://github.com/willkg/socorro-collector
+      $ git clone https://github.com/mozilla/socorro-collector
 
 2. Create a virtualenv with Python 2.7:
 
