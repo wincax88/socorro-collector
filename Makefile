@@ -6,12 +6,12 @@ default:
 
 help:
 	@echo "dev-like environment:"
-	@echo "   build      - build docker containers"
-	@echo "   run        - docker-compose up the entire system"
+	@echo "   build      - build docker containers for dev"
+	@echo "   run        - docker-compose up the entire system for dev"
 	@echo ""
 	@echo "Mozilla prod-like environment:"
-	@echo "   build-prod - build docker containers"
-	@echo "   run-prod   - docker-compose up the entire system"
+	@echo "   build-prod - build docker containers for prod"
+	@echo "   run-prod   - docker-compose up the entire system for prod"
 	@echo ""
 	@echo "clean         - remove all build, test, coverage and Python artifacts"
 	@echo "lint          - check style with flake8"
@@ -43,13 +43,13 @@ run: .docker-build
 
 clean:
 	# container-built things
-	# FIXME: This might not work
-	${DOCKERCOMPOSE} run appbase rm -rf /crashes
+	${DOCKERCOMPOSE} run appbase rm -rf crashes
+	${DOCKERCOMPOSE} run appbase rm -rf devcrashes
 
 	# python related things
-	rm -fr build/
-	rm -fr dist/
-	rm -fr .eggs/
+	-rm -fr build/
+	-rm -fr dist/
+	-rm -fr .eggs/
 	find . -name '*.egg-info' -exec rm -fr {} +
 	find . -name '*.egg' -exec rm -f {} +
 	find . -name '*.pyc' -exec rm -f {} +
@@ -57,14 +57,15 @@ clean:
 	find . -name '__pycache__' -exec rm -fr {} +
 
 	# test related things
-	rm -f .coverage
-	rm -fr cover/
+	-rm -f .coverage
+	${DOCKERCOMPOSE} run appbase rm -fr cover
 
-	# state file
-	rm .docker-build
+	# state files
+	-rm .docker-build
+	-rm .docker-build-prod
 
 lint:
-	${DOCKERCOMPOSE} run appbase flake8 collector tests
+	${DOCKERCOMPOSE} run appbase flake8 collector
 
 test:
 	${DOCKERCOMPOSE} run appbase ./scripts/test.sh
