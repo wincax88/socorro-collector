@@ -42,23 +42,19 @@ run: .docker-build
 	${DOCKERCOMPOSE} up
 
 clean:
-	# container-built things
-	${DOCKERCOMPOSE} run appbase rm -rf crashes
-	${DOCKERCOMPOSE} run appbase rm -rf devcrashes
-
 	# python related things
-	-rm -fr build/
-	-rm -fr dist/
-	-rm -fr .eggs/
-	find . -name '*.egg-info' -exec rm -fr {} +
+	-rm -rf build/
+	-rm -rf dist/
+	-rm -rf .eggs/
+	find . -name '*.egg-info' -exec rm -rf {} +
 	find . -name '*.egg' -exec rm -f {} +
 	find . -name '*.pyc' -exec rm -f {} +
 	find . -name '*.pyo' -exec rm -f {} +
-	find . -name '__pycache__' -exec rm -fr {} +
+	find . -name '__pycache__' -exec rm -rf {} +
 
 	# test related things
 	-rm -f .coverage
-	${DOCKERCOMPOSE} run appbase rm -fr cover
+	${DOCKERCOMPOSE} run appbase rm -rf cover
 
 	# state files
 	-rm .docker-build
