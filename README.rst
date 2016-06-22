@@ -35,12 +35,23 @@ Install (dev)
       $ make run
 
 
-   In another terminal, you can verify that the containers are running:
+   You should see a lot of output starting like this::
+
+      web_1  | [2016-06-22 15:16:25 +0000] [6] [INFO] Starting gunicorn 19.4.5
+      web_1  | [2016-06-22 15:16:25 +0000] [6] [INFO] Listening at: http://0.0.0.0:8000 (6)
+      web_1  | [2016-06-22 15:16:25 +0000] [6] [INFO] Using worker: sync
+      web_1  | [2016-06-22 15:16:25 +0000] [11] [INFO] Booting worker with pid: 11
+      web_1  | 2016-06-22 15:16:25,289 INFO - collector -  - MainThread - app_name: collector
+      web_1  | 2016-06-22 15:16:25,290 INFO - collector -  - MainThread - app_version: 4.0
+      web_1  | 2016-06-22 15:16:25,290 INFO - collector -  - MainThread - current configuration:
+
+   In another terminal, you can verify that the web container is running:
 
    .. code-block:: shell
 
       $ docker ps
-
+      CONTAINER ID    IMAGE                  COMMAND                  CREATED  STATUS  PORTS                   NAMES
+      653f09e6136d    socorrocollector_web   "./scripts/run_web.sh"   ...      ...     0.0.0.0:8000->8000/tcp  socorrocollector_web_1
 
    You can send a crash report into the system and watch it go through the
    steps:
@@ -48,10 +59,19 @@ Install (dev)
    .. code-block:: shell
 
       $ ./scripts/send_crash_report.sh
+      ...
+      <curl http output>
+      ...
+      CrashID=bp-6c43aa7c-7d34-41cf-85aa-55b0d2160622
+      *  Closing connection 0
 
 
-   You should get a CrashID back from the HTTP POST and also be able to follow
-   the crash through the docker-compose output.
+   You should get a CrashID back from the HTTP POST. You'll also see docker
+   logging output something like this::
+
+      web_1  | 2016-06-22 15:19:49,040 INFO - collector -  - MainThread - 8f63752c-57c6-4e5d-b2cf-cabde2160622 received
+      web_1  | 2016-06-22 15:19:49,040 DEBUG - collector -  - MainThread - not throttled Test 1.0
+      web_1  | 2016-06-22 15:19:49,042 INFO - collector -  - MainThread - 8f63752c-57c6-4e5d-b2cf-cabde2160622 accepted
 
    .. Note::
 
@@ -60,6 +80,8 @@ Install (dev)
       haven't figured out a good way of specifying which environment to use
       which affects containers and configuration and other things. Maybe
       multiple compose files?
+
+   When you're done with the process, hit CTRL-C to gracefully kill the docker container.
 
 5. Run tests:
 
