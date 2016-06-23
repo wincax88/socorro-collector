@@ -11,21 +11,102 @@ Prototype extracted Socorro breakpad crash collector.
 Quickstart
 ==========
 
-Install
--------
+Install (dev)
+-------------
+
+1. Clone the repository:
+
+   .. code-block:: shell
+
+      $ git clone https://github.com/<YOUR-FORK>/socorro-collector
+
+2. Install docker and docker-compose
+
+3. Build:
+
+   .. code-block:: shell
+
+      $ make build
+
+4. Run with a simple development configuration:
+
+   .. code-block:: shell
+
+      $ make run
+
+
+   You should see a lot of output starting like this::
+
+      web_1  | [2016-06-22 15:16:25 +0000] [6] [INFO] Starting gunicorn 19.4.5
+      web_1  | [2016-06-22 15:16:25 +0000] [6] [INFO] Listening at: http://0.0.0.0:8000 (6)
+      web_1  | [2016-06-22 15:16:25 +0000] [6] [INFO] Using worker: sync
+      web_1  | [2016-06-22 15:16:25 +0000] [11] [INFO] Booting worker with pid: 11
+      web_1  | 2016-06-22 15:16:25,289 INFO - collector -  - MainThread - app_name: collector
+      web_1  | 2016-06-22 15:16:25,290 INFO - collector -  - MainThread - app_version: 4.0
+      web_1  | 2016-06-22 15:16:25,290 INFO - collector -  - MainThread - current configuration:
+
+   In another terminal, you can verify that the web container is running:
+
+   .. code-block:: shell
+
+      $ docker ps
+      CONTAINER ID    IMAGE                  COMMAND                  CREATED  STATUS  PORTS                   NAMES
+      653f09e6136d    socorrocollector_web   "./scripts/run_web.sh"   ...      ...     0.0.0.0:8000->8000/tcp  socorrocollector_web_1
+
+   You can send a crash report into the system and watch it go through the
+   steps:
+
+   .. code-block:: shell
+
+      $ ./scripts/send_crash_report.sh
+      ...
+      <curl http output>
+      ...
+      CrashID=bp-6c43aa7c-7d34-41cf-85aa-55b0d2160622
+      *  Closing connection 0
+
+   You should get a CrashID back from the HTTP POST. You'll also see docker
+   logging output something like this::
+
+      web_1  | 2016-06-22 15:19:49,040 INFO - collector -  - MainThread - 8f63752c-57c6-4e5d-b2cf-cabde2160622 received
+      web_1  | 2016-06-22 15:19:49,040 DEBUG - collector -  - MainThread - not throttled Test 1.0
+      web_1  | 2016-06-22 15:19:49,042 INFO - collector -  - MainThread - 8f63752c-57c6-4e5d-b2cf-cabde2160622 accepted
+
+   When you're done with the process, hit CTRL-C to gracefully kill the docker container.
+
+5. Run tests:
+
+   .. code-block:: shell
+
+      $ make test
+
+   If you need to run specific tests or pass in different arguments, you can
+   do:
+
+   .. code-block:: shell
+
+      $ docker-compose run appbase ./scripts/test.sh [ARGS]
+
+   All ARGS are pass directly to nosetests.
+
+
+The build and run steps use the dev configuration. You can also use the
+production configuration akin to what we use for Mozilla Crash Stats in
+production by using the ``build-prod`` and ``run-prod`` make rules.
+
+
+Install (production)
+--------------------
+
+FIXME: This may not be right.
 
 1. Clone the repo:
 
    .. code-block:: shell
 
-      $ git clone https://github.com/willkg/socorro-collector
+      $ git clone https://github.com/mozilla/socorro-collector
 
-   .. Note::
-
-      If you plan on doing development, clone your fork of the repo
-      instead.
-
-2. Create a virtualenv:
+2. Create a virtualenv with Python 2.7:
 
    .. code-block:: shell
 
@@ -37,36 +118,25 @@ Install
 
       $ ./scripts/pipstrap.py
 
-4. Install requirements and socorro-collector in the collector virtualenv.
-
-   For production:
+4. Install requirements and socorro-collector in the collector virtualenv:
 
    .. code-block:: shell
 
       $ pip install --require-hashes -r requirements.txt
       $ pip install .
 
-   For development:
+5. Configure the collector.
+
+6. Run the web app:
 
    .. code-block:: shell
 
-      $ pip install --require-hashes -r requirements-dev.txt
-      $ pip install -e .
+      # Populate environment with necessary configuration.
+      $ gunicorn collector.wsgi --log-file -
 
+7. Run the crashmover:
 
-Running in a dev environment
-----------------------------
+   .. code-block:: shell
 
-FIXME
-
-
-Running tests
--------------
-
-Run in the collector virtualenv:
-
-.. code-block:: shell
-
-   $ ./scripts/test.sh
-
-This runs nosetests. It'll pass any arguments you provide to nose.
+      # Populate environment with necessary configuration.
+      $ ./scripts/socorro collector.crashmover_app.CrashMoverApp

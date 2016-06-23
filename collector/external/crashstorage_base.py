@@ -561,9 +561,8 @@ class PolyCrashStorage(CrashStorageBase):
             self.quit_check()
             try:
                 a_store.save_raw_crash(raw_crash, dumps, crash_id)
-            except Exception, x:
-                self.logger.error('%s failure: %s', a_store.__class__,
-                                  str(x))
+            except Exception as x:
+                self.logger.exception('%s failure: %s', a_store.__class__, x)
                 storage_exception.gather_current_exception()
         if storage_exception.has_exceptions():
             raise storage_exception

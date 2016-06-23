@@ -1,0 +1,23 @@
+# docker-compose for socorro-collector that creates a minimal collector.
+#
+# Note: Requires docker 1.10.0+ and docker-compose 1.6.0+.
+version: "2"
+services:
+  appbase:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: config/dev.env
+    volumes:
+      - .:/app
+      - devcrashes:/devcrashes
+
+  web:
+    extends:
+      service: appbase
+    ports:
+      - "8000:8000"
+    command: ./scripts/run_web.sh
+
+volumes:
+  devcrashes:

@@ -91,7 +91,6 @@ class DatePrefixKeyBuilder(KeyBuilderBase):
 
 #==============================================================================
 class ConnectionContextBase(RequiredConfig):
-
     required_config = Namespace()
     required_config.add_option(
         'access_key',
@@ -171,12 +170,15 @@ class ConnectionContextBase(RequiredConfig):
     #--------------------------------------------------------------------------
     def _connect(self):
         try:
-            return self.connection
+            if self.connection:
+                return self.connection
         except AttributeError:
-            self.connection = self._connect_to_endpoint(
-                **self._get_credentials()
-            )
-            return self.connection
+            pass
+
+        self.connection = self._connect_to_endpoint(
+            **self._get_credentials()
+        )
+        return self.connection
 
     #--------------------------------------------------------------------------
     def _get_credentials(self):
@@ -288,26 +290,6 @@ class ConnectionContextBase(RequiredConfig):
 
 
 #==============================================================================
-class ConnectionContextWithHostAndPortBase(RequiredConfig):
-    """an alternative base class that specific implementations of Boto
-    connection can derive.  It adds "host" and "port" to the configuration"""
-
-    required_config = Namespace()
-    required_config.add_option(
-        'host',
-        doc="The hostname (leave empty for AWS)",
-        default="",
-        reference_value_from='resource.boto',
-    )
-    required_config.add_option(
-        'port',
-        doc="The network port (leave at 0 for AWS)",
-        default=0,
-        reference_value_from='resource.boto',
-    )
-
-
-#==============================================================================
 class S3ConnectionContext(ConnectionContextBase):
     """This derived class includes the specifics for connection to S3"""
     required_config = Namespace()
@@ -365,10 +347,47 @@ class RegionalS3ConnectionContext(S3ConnectionContext):
     #--------------------------------------------------------------------------
     def _connect(self):
         try:
-            return self.connection
+            if self.connection:
+                return self.connection
         except AttributeError:
-            self.connection = self._connect_to_endpoint(
-                self._region,
-                **self._get_credentials()
-            )
-            return self.connection
+            pass
+
+        self.connection = self._connect_to_endpoint(
+            self._region,
+            **self._get_credentials()
+        )
+        return self.connection
+
+
+class HostPortS3ConnectionContext(S3ConnectionContext):
+    """an alternative base class that specific implementations of Boto
+    connection can derive.  It adds "host" and "port" to the configuration"""
+
+    required_config = Namespace()
+    required_config.add_option(
+        'host',
+        doc="The hostname (leave empty for AWS)",
+        default="",
+        reference_value_from='resource.boto',
+    )
+    required_config.add_option(
+        'port',
+        doc="The network port (leave at 0 for AWS)",
+        default=0,
+        reference_value_from='resource.boto',
+    )
+
+    def __init__(self, config, **kwargs):
+        super(HostPortS3ConnectionContext, self).__init__(config, **kwargs)
+        self.host = config.host
+        self.port = config.port
+
+    def _get_credentials(self):
+        return {
+            'aws_access_key_id': self.config.access_key,
+            'aws_secret_access_key': self.config.secret_access_key,
+            'is_secure': False,  # FIXME
+            'calling_format': self._calling_format(),
+            'host': self.host,
+            'port': self.port,
+        }

@@ -336,6 +336,14 @@ class LoggerWrapper(object):
             **kwargs
         )
 
+    #--------------------------------------------------------------------------
+    def exception(self, message, *args, **kwargs):
+        self.logger.exception(
+            self.executor_identity() + message,
+            *args,
+            **kwargs
+        )
+
 
 #------------------------------------------------------------------------------
 def setup_logger(config, local_unused, args_unused):
