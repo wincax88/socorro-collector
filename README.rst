@@ -2,7 +2,19 @@
 Socorro collector
 =================
 
-Prototype extracted Socorro breakpad crash collector.
+Collector is a WSGI application. Its task is to accept incoming crash reports
+from remote clients and save them in a place and format usable by further
+applications.
+
+Raw crashes are accepted via HTTP POST. The form data from the POST is then
+arranged into a JSON and saved into the local file system. The collector is
+responsible for assigning an ooid? (Our Own ID) to the crash. It also assigns a
+Throttle? value which determines if the crash is eventually to go into the
+relational database.
+
+Should the saving to a local file system fail, there is a fallback storage
+mechanism. A second file system can be configured to take the failed saves. This
+file system would likely be an NFS mounted file system.
 
 * Free software: Mozilla Public License version 2.0
 * Documentation: FIXME
@@ -11,8 +23,11 @@ Prototype extracted Socorro breakpad crash collector.
 Quickstart
 ==========
 
-Install (dev)
--------------
+This is a quickstart using Docker to see how the pieces work and also for local
+development.
+
+For more comprehensive documentation or instructions on how to set this up in
+production, see the documentation.
 
 1. Clone the repository:
 
