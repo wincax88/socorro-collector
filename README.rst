@@ -17,7 +17,7 @@ mechanism. A second file system can be configured to take the failed saves. This
 file system would likely be an NFS mounted file system.
 
 * Free software: Mozilla Public License version 2.0
-* Documentation: FIXME
+* Documentation: https://socorro-collector.readthedocs.io/
 
 
 Quickstart
@@ -27,7 +27,8 @@ This is a quickstart using Docker to see how the pieces work and also for local
 development.
 
 For more comprehensive documentation or instructions on how to set this up in
-production, see the documentation.
+production, see `the manual on ReadTheDocs
+<https://socorro-collector.readthedocs.io/>`_.
 
 1. Clone the repository:
 
