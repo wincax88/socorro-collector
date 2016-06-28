@@ -56,6 +56,9 @@ clean:
 	-rm -f .coverage
 	${DOCKERCOMPOSE} run appbase rm -rf cover
 
+	# docs files
+	-rm -rf docs/_build/
+
 	# state files
 	-rm .docker-build
 	-rm .docker-build-prod
@@ -70,9 +73,9 @@ test-coverage:
 	${DOCKERCOMPOSE} run appbase ./scripts/test.sh --with-coverage --cover-package=collector --cover-html
 
 docs:
-	# FIXME: This might not work
-	sphinx-apidoc -o docs/ collector
-	$(MAKE) -C docs/ clean
-	$(MAKE) -C docs/ html
+	${DOCKERCOMPOSE} run appbase $(MAKE) -C docs/ clean
+	${DOCKERCOMPOSE} run appbase $(MAKE) -C docs/ html
+	${DOCKERCOMPOSE} run appbase find docs/_build/ -type d -exec 'chmod' '777' '{}' ';'
+	${DOCKERCOMPOSE} run appbase find docs/_build/ -type f -exec 'chmod' '666' '{}' ';'
 
 .PHONY: default clean build docs lint run test test-coverage

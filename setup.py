@@ -21,14 +21,19 @@ setup(
     version='0.1.0',
     description='Prototype Socorro breakpd collector',
     long_description=get_file('README.rst'),
-    author="Will Kahn-Greene",
-    author_email='willkg@mozilla.com',
-    url='https://github.com/willkg/socorro-collector',
+    author='Mozilla',
+    author_email='socorro-dev@mozilla.com',
+    url='https://github.com/mozilla/socorro-collector',
     packages=[
         'collector',
     ],
     package_dir={
         'collector': 'collector'
+    },
+    entry_points={
+        'console_scripts': [
+            'socorro=collector.app.socorro_app:SocorroWelcomeApp.run'
+        ],
     },
     include_package_data=True,
     license="MPLv2",

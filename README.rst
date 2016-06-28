@@ -106,9 +106,12 @@ production, see `the manual on ReadTheDocs
    All ARGS are pass directly to nosetests.
 
 
-The build and run steps use the dev configuration. You can also use the
-production configuration akin to what we use for Mozilla Crash Stats in
-production by using the ``build-prod`` and ``run-prod`` make rules.
+.. Note::
+
+   The build and run steps use a very simple dev configuration. You can also use
+   the "production configuration" which sets things up similar to the production
+   Mozilla Crash Stats system by using the ``build-prod`` and ``run-prod`` make
+   rules.
 
 
 Install (production)

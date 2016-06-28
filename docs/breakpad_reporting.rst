@@ -2,6 +2,11 @@
 All about breakpad
 ==================
 
+.. Note::
+
+   Parts of this are specific to Mozilla breakpad clients.
+
+
 Links about breakpad
 ====================
 
@@ -14,10 +19,13 @@ Firefox Breakpad page:
     Note: A lot of this is out of date.
 
 Socorro docs:
-    http://socorro.readthedocs.io/en/latest/
+    https://socorro.readthedocs.io/
 
     Notes on testing collector and processor:
-    http://socorro.readthedocs.io/en/latest/configuring-socorro.html#test-collection-and-processing
+    https://socorro-collector.readthedocs.io/en/latest/configuring-socorro.html#test-collection-and-processing
+
+Socorro Collector docs:
+    https://socorro-collector.readthedocs.io/
 
 
 Where do reports come from?
@@ -90,7 +98,8 @@ Things to know about the HTTP POST request:
 2. The entire crash report and metadata is in the request body.
 
    Note that some of the information is duplicated in querystring variables to
-   make logging and debugging easier.
+   make logging and debugging easier, but all the data is in the request body so
+   querystring variables can be safely ignored.
 
 3. HTTP POST request body is multi-part form data.
 
@@ -101,9 +110,6 @@ Things to know about the HTTP POST request:
    Still a good idea to do a pass on removing null bytes.
 
 5. Content-length for HTTP POST request.
-
-   TODO: Go through all the existing collector code to see if it *always* uses a
-   Content-Length to determine the end of the data.
 
 6. Crash reports can contain instructions on throttling.
 
@@ -147,18 +153,22 @@ Things to know about the HTTP POST response:
 Testing breakpad crash reporting
 ================================
 
-When working on Antenna, it helps to be able to send real live crashes to your
-development instance. There are a few options:
+When working on Socorro Collector, it helps to be able to send real live crashes
+to your development instance. There are a few options:
 
-1. Use curl:
+1. Use ``scripts/send_crash_report.sh`` shell script which uses curl to send
+   a crash report to localhost:8000.
 
-   http://socorro.readthedocs.io/en/latest/configuring-socorro.html#test-collection-and-processing
+2. Use curl by hand. Something like this:
 
-2. Use an addon:
+   .. literalinclude:: ../scripts/send_crash_report.sh
+      :language: shell
+
+3. Use an addon:
 
    https://addons.mozilla.org/en-US/firefox/addon/crash-me-now-simple/
 
-3. Set environment variables:
+4. Set environment variables when running Firefox:
 
    https://developer.mozilla.org/en-US/docs/Environment_variables_affecting_crash_reporting
 

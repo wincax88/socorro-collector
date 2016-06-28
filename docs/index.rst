@@ -11,8 +11,9 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   production.rst
+   crashstorage.rst
    dev.rst
-   collector.rst
    breakpad_reporting.rst
 
 
