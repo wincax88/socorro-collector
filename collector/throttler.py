@@ -22,6 +22,80 @@ IGNORE = 3    # ignore this submission entirely
 
 #==============================================================================
 class LegacyThrottler(RequiredConfig):
+    """Throttle incoming crashes
+
+    Throttling lets you vet crashes as they're coming into the system. Maybe you
+    want to dump crashes that are clearly junk or statistically sample incoming
+    crashes so some subset get processed.
+
+    Throttling rules are applied to the key/value pairs of an incoming crash
+    until a matching rule is hit.
+
+    The ``throttle_conditions`` configuration parameter value is a Python list
+    of tuples of the form::
+
+        (RawCrashKey?, ConditionFunction?, Probability)
+
+    Specifically:
+
+    * ``RawCrashKey?``: a name of a field from the HTTP POST form. The
+      possibilities are: "StartupTime?", "Vendor", "InstallTime?", "timestamp",
+      "Add-ons", "BuildID", "SecondsSinceLastCrash?", "UserID", "ProductName?",
+      "URL", "Theme", "Version", "CrashTime?" Alternatively, the string "*" has
+      special meaning when the ConditionFunction? is a reference to a Python
+      function.
+
+    * ``ConditionFunction?``: a function accepting a single string value and
+      returning a boolean; regular expression; or a constant used for an
+      equality test with the value for the RawCrashKey?. Alternatively, If the
+      RawCrashKey? is "*" and the function will be passed the entire raw crash
+      as a dict rather than just a single value of one element of the raw
+      crash.
+
+    * ``Probability``: an integer between 0 and 100 inclusive. At 100, all JSON
+      files, for which the ConditionFunction? returns true, will be saved in
+      the database. At 0, no JSON files for which the ConditionFunction?
+      returns true will be saved to the database. At 25, there is twenty-five
+      percent probability that a matching JSON file will be written to the
+      database. Alternatively, the value can be None. In that case, no
+      probablity is calculated and the throttler just returns the IGNORE value.
+      The crash is not stored and "Unsupported=1" is returned to the client.
+
+    These conditions are applied one at a time to each submitted crash. The
+    first match of a condition function to a value stops the iteration through
+    the list. The probability of that first matched condition will be applied
+    to that crash.
+
+    Example::
+
+        [
+            # queue 25% of crashes with version ending in "pre"
+            ("Version", lambda x: x[-3:] == "pre", 25),
+
+            # queue 75% of crashes where the inspector addon is at 1.x
+            ("Add-ons", re.compile('inspector\@mozilla\.org\:1\..*'), 75),
+
+            # queue all of this user's crashes
+            ("UserID", "d6d2b6b0-c9e0-4646-8627-0b1bdd4a92bb", 100),
+
+            # queue all crashes that happened within 5 minutes of another crash
+            ("SecondsSinceLastCrash", lambda x: 300 >= int(x) >= 0, 100),
+
+            # ignore Flock 3.0
+            ("*", lambda d: d["Product"] == "Flock" and d["Version"] == "3.0", None),
+
+            # queue 10% of what's left
+            (None, True, 10)
+        ]
+
+
+    .. Warning::
+
+       You want to avoid bogging down the collector with throttling rules. Put
+       most-likely-to-match rules towards the top and keep the list of rules
+       small.
+
+    """
     required_config = Namespace()
     required_config.add_option(
       'throttle_conditions',
