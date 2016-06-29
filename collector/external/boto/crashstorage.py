@@ -263,6 +263,9 @@ class BotoCrashStorage(CrashStorageBase):
 
 #==============================================================================
 class BotoS3CrashStorage(BotoCrashStorage):
+    """This class sends processed crash reports to an end point reachable
+    by the boto S3 library.
+    """
     required_config = Namespace()
     required_config.resource_class = change_default(
         BotoCrashStorage,
