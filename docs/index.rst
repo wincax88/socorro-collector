@@ -12,6 +12,8 @@ Contents
    :maxdepth: 2
 
    production
+   web_app
+   crashmover_app
    throttler
    crashstorage_boto
    crashstorage_rabbitmq

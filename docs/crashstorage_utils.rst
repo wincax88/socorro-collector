@@ -1,5 +1,5 @@
 ========================
-Crash storage: Utilities
+Crash storage: utilities
 ========================
 
 .. autoconfigman:: collector.external.crashstorage_base.Redactor

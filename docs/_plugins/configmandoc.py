@@ -28,7 +28,7 @@ from docutils.parsers.rst import Directive
 from docutils.statemachine import ViewList
 from sphinx.util.docstrings import prepare_docstring
 
-from configman.namespace import Namespace
+from configman.namespace import Namespace, Option, Aggregation
 
 
 def split_clspath(clspath):
@@ -102,7 +102,7 @@ class AutoConfigmanDirective(Directive):
                 for name, value in namespace.iteritems():
                     if isinstance(value, Namespace):
                         generate_namespace_docs(value, name + '_')
-                    else:
+                    elif isinstance(value, Option):
                         self.add_line('        ``%s``' % (basename + value.name), sourcename)
                         self.add_line('            :default: ``%r``' % value.default, sourcename)
                         self.add_line('            :converter: %r' % value.from_string_converter, sourcename)
@@ -111,6 +111,13 @@ class AutoConfigmanDirective(Directive):
                         self.add_line('', '')
                         self.add_line('            %s' % value.doc, sourcename)
                         self.add_line('', '')
+                    elif isinstance(value, Aggregation):
+                        # Ignore aggregations--they're for setting something up
+                        # using a bunch of configuratino things (I think)
+                        pass
+                    else:
+                        raise Exception('No idea what to do with %r' % value)
+
             generate_namespace_docs(namespace)
 
     def run(self):
