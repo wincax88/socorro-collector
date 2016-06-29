@@ -11,8 +11,13 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   production.rst
+   crashstorage_boto.rst
+   crashstorage_rabbitmq.rst
+   crashstorage_fs.rst
+   crashstorage_statsd.rst
+   crashstorage_utils.rst
    dev.rst
-   collector.rst
    breakpad_reporting.rst
 
 

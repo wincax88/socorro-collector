@@ -11,7 +11,7 @@ All code files need to start with the MPLv2 header::
     # License, v. 2.0. If a copy of the MPL was not distributed with this
     # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-PEP8 is nice. To lint your code, do:
+To lint your code, do:
 
 .. code-block:: shell
 
@@ -23,17 +23,14 @@ If you hit issues, use ``# noqa``.
 Documentation
 =============
 
-Documentation is compiled with Sphinx_ and is available on ReadTheDocs.
-API is automatically extracted from docstrings in the code.
+Documentation is compiled with `Sphinx <http://www.sphinx-doc.org/>`_ and is
+available on ReadTheDocs.
 
 To build the docs, run this:
 
 .. code-block:: shell
 
     $ make docs
-
-
-.. _Sphinx: http://www.sphinx-doc.org/en/stable/
 
 
 Testing
@@ -43,13 +40,25 @@ To run the tests, run this:
 
 .. code-block:: shell
 
-   $ py.test
+   $ make test
 
+This runs ``./scripts/test.sh`` in the appbase container. You can do this by
+hand like this:
 
-Tests go in ``tests/``. Data required by tests goes in ``tests/data/``.
+.. code-block:: shell
 
-We're using py.test_ for a test harness and test discovery. We use WebTest_ for
-testing the WSGI application and HTTP requests.
+   $ docker-compose run appbase ./scripts/test.sh [TEST-ARGS]
 
-.. _WebTest: http://webtest.pythonpaste.org/en/latest/index.html
-.. _py.test: http://pytest.org/
+which lets you pass in additional args to the nose test runner.
+
+To run the tests with coverage, do:
+
+.. code-block:: shell
+
+   $ make test-coverage
+
+You can also send test crashes to a running collector on localhost:8000 using:
+
+.. code-block:: shell
+
+   $ ./scripts/send_crash_report.sh
