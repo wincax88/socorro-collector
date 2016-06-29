@@ -29,6 +29,7 @@ sys.path.insert(0, os.path.abspath('_plugins'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'alabaster',
     'sphinx.ext.autodoc',
     'configmandoc',
 ]
@@ -48,7 +49,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Collector'
+project = u'Socorro Collector'
 copyright = u'2016, Mozilla'
 author = u'Mozilla'
 
@@ -104,7 +105,7 @@ pygments_style = 'sphinx'
 #keep_warnings = False
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = False
+# todo_include_todos = False
 
 
 # -- Options for HTML output ----------------------------------------------
@@ -112,12 +113,20 @@ todo_include_todos = False
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = 'alabaster'
-
-# Theme options are theme-specific and customize the look and feel of a theme
-# further.  For a list of options available for each theme, see the
-# documentation.
-#html_theme_options = {}
-
+html_theme_options = {
+    'github_user': 'mozilla',
+    'github_repo': 'socorro-collector',
+    'github_button': True,
+    'show_related': True,
+}
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'relations.html',
+        'searchbox.html',
+    ]
+}
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
 

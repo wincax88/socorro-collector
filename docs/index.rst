@@ -11,22 +11,23 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   production.rst
-   throttler.rst
-   crashstorage_boto.rst
-   crashstorage_rabbitmq.rst
-   crashstorage_fs.rst
-   crashstorage_statsd.rst
-   crashstorage_utils.rst
+   production
+   throttler
+   crashstorage_boto
+   crashstorage_rabbitmq
+   crashstorage_fs
+   crashstorage_statsd
+   crashstorage_utils
 
 
-Developer-centric Contents
+Developer-centric contents
 ==========================
 
 .. toctree::
+   :maxdepth: 2
 
-   dev.rst
-   breakpad_reporting.rst
+   dev
+   breakpad_reporting
 
 
 Indices and tables
