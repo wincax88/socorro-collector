@@ -64,7 +64,7 @@ clean:
 	-rm .docker-build-prod
 
 lint:
-	${DOCKERCOMPOSE} run appbase flake8 collector
+	${DOCKERCOMPOSE} run appbase flake8 --statistics collector
 
 test:
 	${DOCKERCOMPOSE} run appbase ./scripts/test.sh
