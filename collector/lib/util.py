@@ -28,24 +28,36 @@ class FakeLogger(object):
     return '%s %s' % (loggingLevelString, message)
   def log(self,*x,**kwargs):
     print >>sys.stderr, self.createLogMessage(*x)
-  def debug(self,*x,**kwargs): self.log(logging.DEBUG, *x)
-  def info(self,*x,**kwargs): self.log(logging.INFO, *x)
-  def warning(self,*x,**kwargs): self.log(logging.WARNING, *x)
+  def debug(self,*x,**kwargs):
+    self.log(logging.DEBUG, *x)
+  def info(self,*x,**kwargs):
+    self.log(logging.INFO, *x)
+  def warning(self,*x,**kwargs):
+    self.log(logging.WARNING, *x)
   warn = warning
-  def error(self,*x,**kwargs): self.log(logging.ERROR, *x)
-  def critical(self,*x,**kwargs): self.log(logging.CRITICAL, *x)
+  def error(self,*x,**kwargs):
+    self.log(logging.ERROR, *x)
+  def critical(self,*x,**kwargs):
+    self.log(logging.CRITICAL, *x)
   fatal = critical
 
 
 #=================================================================================================================
 class SilentFakeLogger(object):
-  def log(self,*x,**kwargs): pass
-  def debug(self,*x,**kwargs): pass
-  def info(self,*x,**kwargs): pass
-  def warning(self,*x,**kwargs): pass
-  def error(self,*x,**kwargs): pass
-  def critical(self,*x,**kwargs): pass
-  def fatal(self,*x,**kwargs):pass
+  def log(self,*x,**kwargs):
+    pass
+  def debug(self,*x,**kwargs):
+    pass
+  def info(self,*x,**kwargs):
+    pass
+  def warning(self,*x,**kwargs):
+    pass
+  def error(self,*x,**kwargs):
+    pass
+  def critical(self,*x,**kwargs):
+    pass
+  def fatal(self,*x,**kwargs):
+    pass
 
 #=================================================================================================================
 class StringLogger(FakeLogger):
