@@ -29,7 +29,13 @@ class JSONISOEncoder(json.JSONEncoder):
 
 
 class KeyBuilderBase(object):
-    """Base key builder for s3 pseudo-filenames"""
+    """Base key builder for s3 pseudo-filenames
+
+    This builds keys like this::
+
+        {prefix}/v1/{name_of_thing}/{id}
+
+    """
     def build_keys(self, prefix, name_of_thing, id):
         """
         Use S3 pseudo-directories to make it easier to list/expire later
@@ -41,10 +47,14 @@ class KeyBuilderBase(object):
 
 
 class DatePrefixKeyBuilder(KeyBuilderBase):
-    """s3 pseudo-filename key builder with date prefixes
+    """S3 pseudo-filename key builder with date prefixes
 
     This adds the date to the prefix for raw_crash objects making it easier to
     list all the raw_crash objects for a specific date.
+
+    This builds keys like this::
+
+        {prefix}/v2/{name_of_thing}/{entropy}/{date}/{id}
 
     """
     def build_keys(self, prefix, name_of_thing, id):
@@ -291,7 +301,7 @@ class ConnectionContextBase(RequiredConfig):
 
 #==============================================================================
 class S3ConnectionContext(ConnectionContextBase):
-    """This derived class includes the specifics for connection to S3"""
+    """Connection context for connecting to AWS S3"""
     required_config = Namespace()
     required_config.add_option(
         'calling_format',
@@ -321,9 +331,12 @@ class S3ConnectionContext(ConnectionContextBase):
 
 #==============================================================================
 class RegionalS3ConnectionContext(S3ConnectionContext):
-    """This derviced class forces you to connect to a specific region
-    which means we can use the OrdinaryCallingFormat as a calling format
-    and then we'll be able to connect to S3 buckets with names in them.
+    """Connection context for connecting to a specific region in AWS S3
+
+    This derviced class forces you to connect to a specific region which means
+    we can use the ``boto.s3.OrdinaryCallingFormat`` as a calling format and
+    then we'll be able to connect to S3 buckets with names in them.
+
     """
     required_config = Namespace()
     required_config.add_option(
@@ -360,21 +373,25 @@ class RegionalS3ConnectionContext(S3ConnectionContext):
 
 
 class HostPortS3ConnectionContext(S3ConnectionContext):
-    """an alternative base class that specific implementations of Boto
-    connection can derive.  It adds "host" and "port" to the configuration"""
+    """Connection context for connecting to an S3-like service at a specified
+    host/port
+
+    This is useful if you're connecting to a fake s3 or minio or some other
+    non-S3 thing.
+
+    """
 
     required_config = Namespace()
     required_config.add_option(
         'host',
-        doc="The hostname (leave empty for AWS)",
-        default="",
+        doc="The hostname to connect to",
         reference_value_from='resource.boto',
     )
     required_config.add_option(
         'port',
-        doc="The network port (leave at 0 for AWS)",
-        default=0,
+        doc="The network port",
         reference_value_from='resource.boto',
+        from_string_converter=int
     )
 
     def __init__(self, config, **kwargs):
