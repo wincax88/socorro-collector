@@ -227,7 +227,7 @@ class LegacyThrottler(RequiredConfig):
                 else:
                     throttle_match = condition(raw_crash[key])
             except KeyError:
-                if key == None:
+                if key is None:
                     throttle_match = condition(None)
                 else:
                     #this key is not present in the jsonData - skip
