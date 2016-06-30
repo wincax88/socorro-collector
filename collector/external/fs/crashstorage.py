@@ -42,7 +42,8 @@ def using_umask(n):
 
 
 class FSRadixTreeStorage(CrashStorageBase):
-    """
+    """Basic radix tree storage for crashes
+
     This class implements basic radix tree storage. It stores crashes using the
     crash_id radix scheme under ``fs_root``.
 
@@ -62,6 +63,7 @@ class FSRadixTreeStorage(CrashStorageBase):
     This storage does not implement ``new_crashes``, but is able to store
     processed crashes. Used alone, it is intended to store only processed
     crashes.
+
     """
 
     required_config = Namespace()
@@ -296,8 +298,7 @@ class FSLegacyRadixTreeStorage(FSRadixTreeStorage):
                                          exc_info=True)
 
 class FSDatedRadixTreeStorage(FSRadixTreeStorage):
-    """
-    This class implements dated radix tree storage -- it enables for traversing
+    """This class implements dated radix tree storage -- it enables for traversing
     a radix tree using an hour/minute prefix. It allows searching for new
     crashes, but doesn't store processed crashes.
 
@@ -317,6 +318,7 @@ class FSDatedRadixTreeStorage(FSRadixTreeStorage):
 
     This storage class is suitable for use as raw crash storage, as it supports
     the ``new_crashes`` method.
+
     """
 
     required_config = Namespace()
@@ -531,8 +533,7 @@ class FSDatedRadixTreeStorage(FSRadixTreeStorage):
 
 class FSLegacyDatedRadixTreeStorage(FSDatedRadixTreeStorage,
                                     FSLegacyRadixTreeStorage):
-    """
-    This legacy radix tree storage implements a backwards-compatible with the
+    """This legacy radix tree storage implements a backwards-compatible with the
     old filesystem storage by setting the symlinks up correctly.
 
     The rationale for creating a diamond structure for multiple inheritance is
@@ -547,6 +548,7 @@ class FSLegacyDatedRadixTreeStorage(FSDatedRadixTreeStorage,
        ``FSDatedRadixTreeStorage``, and the order is dependent as it requires
        the MRO to resolve ``remove`` from the ``FSDatedRadixTreeStorage``
        first, over ``FSLegacyRadixTreeStorage``.
+
     """
     DIR_DEPTH = 1
 
@@ -616,148 +618,27 @@ class FSLegacyDatedRadixTreeStorage(FSDatedRadixTreeStorage,
 
 
 class FSTemporaryStorage(FSLegacyDatedRadixTreeStorage):
-    """This crash storage system uses only the day of the month as the root of
-    the daily directories.  This means that it will recycle directories
-    starting at the beginning of each month"""
+    """Temporary crash storage that uses only the day of the month as the root of
+    the daily directories. This means that it will recycle directories starting
+    at the beginning of each month. This is good for temporary crash storage.
+
+    """
 
     def _get_current_date(self):
         date = utc_now()
         return "%02d" % date.day
 
     def _get_base(self, crash_id):
-        """this method overrides the base method to define the daily file
-        system root directory name.  While the default class is to use a
-        YYYYMMDD form, this class substitutes a simple DD form.  This is the
-        mechanism of directory recycling as at the first day of a new month
-        we return to the same directiory structures that were created on the
-        first day of the previous month"""
+        """this method overrides the base method to define the daily file system root
+        directory name. While the default class is to use a YYYYMMDD form, this
+        class substitutes a simple DD form. This is the mechanism of directory
+        recycling as at the first day of a new month we return to the same
+        directiory structures that were created on the first day of the
+        previous month
+
+        """
         date = dateFromOoid(crash_id)
         if not date:
             date = utc_now()
         date_formatted = "%02d" % (date.day,)
         return [self.config.fs_root, date_formatted]
-
-
-# more user friendly aliases for commonly used classes
-FSPermanentStorage = FSLegacyRadixTreeStorage
-FSDatedPermanentStorage = FSLegacyDatedRadixTreeStorage
-
-
-#==============================================================================
-class TarFileWritingCrashStore(CrashStorageBase):
-    required_config = Namespace()
-    required_config.add_option(
-        name='tarball_name',
-        doc='pathname to a the target tarfile',
-        default=datetime.datetime.now().strftime("%Y%m%d")
-    )
-    required_config.add_option(
-        name='tarfile_module',
-        doc='a module that supplies the tarfile interface',
-        default='tarfile',
-        from_string_converter=class_converter
-    )
-    required_config.add_option(
-        name='gzip_module',
-        doc='a module that supplies the gzip interface',
-        default='gzip',
-        from_string_converter=class_converter
-    )
-
-    #------------------------------------------------------------------------------
-    def _create_tarfile(self):
-        """subclasses that have a different way of openning or creating
-        the tar file pointer can override this method.  Useful for creating
-        text buffer tarfiles or using temporary files"""
-        return self.tarfile_module.open(self.config.tarball_name, 'w')
-
-    #------------------------------------------------------------------------------
-    def __init__(self, config, quit_check_callback=None):
-        super(TarFileWritingCrashStore, self).__init__(config, quit_check_callback)
-        self.tarfile_module = config.tarfile_module
-        self.gzip_module = config.gzip_module
-        self.tar_fp = self._create_tarfile()
-
-    #------------------------------------------------------------------------------
-    def close(self):
-        self.tar_fp.close()
-
-    #------------------------------------------------------------------------------
-    def save_processed(self, processed_crash):
-        processed_crash_as_string = json.dumps(
-            processed_crash,
-            default=dates_to_strings_for_json
-        )
-        crash_id = processed_crash["crash_id"]
-
-        compressed_crash = StringIO()
-        gzip_file = self.gzip_module.GzipFile(fileobj=compressed_crash, mode='w')
-        gzip_file.write(processed_crash_as_string)
-        gzip_file.close()
-        compressed_crash.seek(0)
-        tarinfo = self.tarfile_module.TarInfo('%s.jsonz' % crash_id)
-        tarinfo.size = len(compressed_crash.getvalue())
-        self.tar_fp.addfile(tarinfo, compressed_crash)
-        self.config.logger.debug(
-            'TarFileCrashStore saved - %s to %s',
-            crash_id,
-            self.config.tarball_name
-        )
-
-
-#==============================================================================
-class TarFileSequentialReadingCrashStore(CrashStorageBase):
-    required_config = Namespace()
-    required_config.add_option(
-        name='tarball_name',
-        doc='pathname to a the target tarfile',
-        default='fred.tar'
-    )
-    required_config.add_option(
-        name='tarfile_module',
-        doc='a module that supplies the tarfile interface',
-        default='tarfile',
-        from_string_converter=class_converter
-    )
-    required_config.add_option(
-        name='gzip_module',
-        doc='a module that supplies the gzip interface',
-        default='gzip',
-        from_string_converter=class_converter
-    )
-
-    #------------------------------------------------------------------------------
-    def _create_tarfile(self):
-        """subclasses that have a different way of openning or creating
-        the tar file pointer can override this method.  Useful for creating
-        text buffer tarfiles or using temporary files"""
-        return self.tarfile_module.open(self.config.tarball_name, 'r')
-
-    #------------------------------------------------------------------------------
-    def __init__(self, config, quit_check_callback=None):
-        super(TarFileSequentialReadingCrashStore, self).__init__(
-            config,
-            quit_check_callback
-        )
-        self.tarfile_module = config.tarfile_module
-        self.gzip_module = config.gzip_module
-        self.tar_fp = self._create_tarfile()
-
-    #------------------------------------------------------------------------------
-    def close(self):
-        self.tar_fp.close()
-
-    #------------------------------------------------------------------------------
-    def get_unredacted_processed(self, crash_id_ignored):
-        """we don't implement random access in this class, the next
-        one is all you get no matter what you ask for"""
-        a_tar_info_object = self.tar_fp.next()
-        if a_tar_info_object is None:
-            raise CrashIDNotFound(crash_id_ignored)
-        result_gzip_fp = gzip.GzipFile(
-            fileobj=self.tar_fp.extractfile(a_tar_info_object)
-        )
-        reconstituted_processed_crash_as_str = result_gzip_fp.read().strip()
-        processed_crash = json.loads(reconstituted_processed_crash_as_str)
-        return processed_crash
-
