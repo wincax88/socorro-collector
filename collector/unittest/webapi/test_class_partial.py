@@ -25,7 +25,7 @@ class TestPartialForServiceClasses(TestCase):
                 eq_(local_config, config)
 
         wrapped_class = class_with_partial_init(A, local_config)
-        a = wrapped_class()
+        wrapped_class()
         eq_(wrapped_class.global_config, None)
 
 
@@ -40,7 +40,7 @@ class TestPartialForServiceClasses(TestCase):
                 eq_(local_config, config)
 
         wrapped_class = class_with_partial_init(A, local_config, global_config)
-        a = wrapped_class()
+        wrapped_class()
         eq_(wrapped_class.global_config, global_config)
 
     #--------------------------------------------------------------------------

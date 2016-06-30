@@ -6,8 +6,6 @@ from mock import patch, call, Mock
 from nose.tools import ok_, assert_raises
 from collector.unittest.testbase import TestCase
 
-from datetime import datetime
-
 from configman.dotdict import DotDict
 
 from collector.external.statsd.statsd_rule_benchmark import (
@@ -78,13 +76,7 @@ class TestStatsdCounterRule(TestCase):
         ok_(isinstance(trs.rules[1].wrapped_object, TestRuleTestDangerous))
 
         now_str = 'collector.external.statsd.statsd_base.datetime'
-        with patch(now_str) as now_mock:
-            times =  [
-                datetime(2015, 5, 4, 15, 10, 3),
-                datetime(2015, 5, 4, 15, 10, 2),
-                datetime(2015, 5, 4, 15, 10, 1),
-                datetime(2015, 5, 4, 15, 10, 0),
-            ]
+        with patch(now_str):
             ok_(trs.rules[0].predicate(None))
             statsd_obj.timing.has_calls([])
             ok_(trs.rules[1].action(None))

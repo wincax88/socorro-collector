@@ -76,10 +76,9 @@ class TestSocorroApp(TestCase):
 
     #--------------------------------------------------------------------------
     def test_do_run(self):
-        config = DotDict()
         with mock.patch('collector.app.socorro_app.ConfigurationManager') as cm:
             cm.return_value.context.return_value = mock.MagicMock()
-            with mock.patch('collector.app.socorro_app.signal') as s:
+            with mock.patch('collector.app.socorro_app.signal'):
                 class SomeOtherApp(SocorroApp):
                     app_name='SomeOtherApp'
                     app_verision='1.2.3'
@@ -112,10 +111,9 @@ class TestSocorroApp(TestCase):
 
     #--------------------------------------------------------------------------
     def test_do_run_with_alternate_class_path(self):
-        config = DotDict()
         with mock.patch('collector.app.socorro_app.ConfigurationManager') as cm:
             cm.return_value.context.return_value = mock.MagicMock()
-            with mock.patch('collector.app.socorro_app.signal') as s:
+            with mock.patch('collector.app.socorro_app.signal'):
                 class SomeOtherApp(SocorroApp):
                     app_name='SomeOtherApp'
                     app_verision='1.2.3'
@@ -150,10 +148,9 @@ class TestSocorroApp(TestCase):
 
     #--------------------------------------------------------------------------
     def test_do_run_with_alternate_values_source_list(self):
-        config = DotDict()
         with mock.patch('collector.app.socorro_app.ConfigurationManager') as cm:
             cm.return_value.context.return_value = mock.MagicMock()
-            with mock.patch('collector.app.socorro_app.signal') as s:
+            with mock.patch('collector.app.socorro_app.signal'):
                 class SomeOtherApp(SocorroApp):
                     app_name='SomeOtherApp'
                     app_verision='1.2.3'
