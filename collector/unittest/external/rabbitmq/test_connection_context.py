@@ -68,7 +68,7 @@ class TestConnectionContext(TestCase):
 
     #--------------------------------------------------------------------------
     def _setup_config(self):
-        config = DotDict();
+        config = DotDict()
         config.host = 'localhost'
         config.virtual_host = '/'
         config.port = '5672'
@@ -141,7 +141,7 @@ class TestConnectionContextPooled(TestCase):
 
     #--------------------------------------------------------------------------
     def _setup_config(self):
-        config = DotDict();
+        config = DotDict()
         config.host = 'localhost'
         config.virtual_host = '/'
         config.port = '5672'
