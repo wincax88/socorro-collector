@@ -69,7 +69,7 @@ class TestRuleTestNoCloseMethod(transform_rules.Rule):
 class TestRuleTestBrokenCloseMethod(transform_rules.Rule):
 
     def _action(self, *args, **kwargs):
-        return true
+        return True
 
     def close(self):
         # this is deliberately breaking

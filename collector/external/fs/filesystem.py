@@ -20,7 +20,7 @@ def cleanEmptySubdirectories(topLimit, leafPath, osModule=os):
     opath = os.path.normpath(leafPath)  # allows relative paths to work
     topLimit = os.path.split(os.path.normpath(topLimit))[1]  # allows name or
                                                              # path
-    if not topLimit in opath:
+    if topLimit not in opath:
         raise OSError(
           errno.ENOENT,
           '%s not on path to %s' % (topLimit, leafPath)
@@ -31,7 +31,7 @@ def cleanEmptySubdirectories(topLimit, leafPath, osModule=os):
             break
         try:
             osModule.rmdir(opath)
-        except OSError, e:
+        except OSError as e:
             if errno.ENOTEMPTY == e.errno:
                 break
             else:
@@ -92,7 +92,7 @@ def makedirs(name, mode=0777, osModule=os):
             return
     try:
         osModule.mkdir(name, mode)
-    except OSError, e:
+    except OSError as e:
         #be happy if someone already created the path
         if e.errno != errno.EEXIST:
             raise

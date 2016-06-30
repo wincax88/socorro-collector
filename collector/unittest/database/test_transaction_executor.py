@@ -16,9 +16,12 @@ from collector.unittest.testbase import TestCase
 # From psycopg2.
 TRANSACTION_STATUS_IDLE = 0
 TRANSACTION_STATUS_INTRANS = 2
-class OperationalError(Exception): pass
-class ProgrammingError(Exception): pass
-class InterfaceError(Exception): pass
+class OperationalError(Exception):
+    pass
+class ProgrammingError(Exception):
+    pass
+class InterfaceError(Exception):
+    pass
 
 
 class SomeError(Exception):

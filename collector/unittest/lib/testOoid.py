@@ -58,8 +58,8 @@ class TestOoid(TestCase):
       assert self.xmas05 == ndate1, 'Expect date of %s, got %s' %(self.xmas05,ndate1)
       assert ndepth0 == ndepth1, 'Expect depth0(%d) == depth1(%d)' %(ndepth0,ndepth1)
       assert d == ndepth0, 'Expect depth %d, got %d' % (d,ndepth0)
-    assert None == oo.depthFromOoid(self.badooid0)
-    assert None == oo.depthFromOoid(self.badooid1)
+    assert oo.depthFromOoid(self.badooid0) is None
+    assert oo.depthFromOoid(self.badooid1) is None
 
   def testUuidToOid(self):
     for i in range(len(self.rawuuids)):
@@ -85,16 +85,13 @@ class TestOoid(TestCase):
     for ooid in self.yyyyoids:
       assert self.baseDate == oo.dateFromOoid(ooid), 'Expected %s got %s' %(self.baseDate, oo.dateFromOoid(ooid))
       assert 4 == oo.depthFromOoid(ooid), 'Expected %d, got %d' %(4, oo.depthFromOoid(ooid))
-    assert None == oo.dateFromOoid(self.badooid0)
-    assert None == oo.dateFromOoid(self.badooid1)
+    assert oo.dateFromOoid(self.badooid0) is None
+    assert oo.dateFromOoid(self.badooid1) is None
 
   def testGetDateAndDepth(self):
     for i in range(len(self.dyyoids)):
       date,depth = oo.dateAndDepthFromOoid(self.dyyoids[i])
       assert self.depths[i] == depth, 'Expect depth=%d, got %d (%s)'%(self.depth[i],depth,self.dyyoids[i])
       assert self.baseDate == date, 'Expect %s, got %s' %(self.baseDate, date)
-    assert (None,None) == oo.dateAndDepthFromOoid(self.badooid0)
-    assert (None,None) == oo.dateAndDepthFromOoid(self.badooid1)
-
-if __name__ == "__main__":
-  unittest.main()
+    assert oo.dateAndDepthFromOoid(self.badooid0) == (None, None)
+    assert oo.dateAndDepthFromOoid(self.badooid1) == (None, None)

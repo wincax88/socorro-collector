@@ -70,8 +70,8 @@ class IntegrationTestPriorityjobs(TestCase):
             assert_raises(priorityjobs.MissingArgumentError,
                               jobs.create)
             ok_(
-                mocked_connection.return_value.channel. \
-                    basic_publish.called_once_with(
+                mocked_connection.return_value.channel
+                    .basic_publish.called_once_with(
                         '',
                         'socorro.priority',
                         'b1',

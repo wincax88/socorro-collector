@@ -3,7 +3,6 @@ from nose.tools import eq_, ok_, assert_raises
 from collector.unittest.testbase import TestCase
 
 from configman import (
-    class_converter,
     Namespace,
     command_line,
     ConfigFileFutureProxy,
@@ -12,9 +11,7 @@ from configman.dotdict import DotDict
 
 from collector.app.socorro_app import (
     SocorroApp,
-    SocorroWelcomeApp,
     main,
-    klass_to_pypath,
 )
 from collector.app.for_application_defaults import ApplicationDefaultsProxy
 
@@ -79,10 +76,9 @@ class TestSocorroApp(TestCase):
 
     #--------------------------------------------------------------------------
     def test_do_run(self):
-        config = DotDict()
         with mock.patch('collector.app.socorro_app.ConfigurationManager') as cm:
             cm.return_value.context.return_value = mock.MagicMock()
-            with mock.patch('collector.app.socorro_app.signal') as s:
+            with mock.patch('collector.app.socorro_app.signal'):
                 class SomeOtherApp(SocorroApp):
                     app_name='SomeOtherApp'
                     app_verision='1.2.3'
@@ -115,10 +111,9 @@ class TestSocorroApp(TestCase):
 
     #--------------------------------------------------------------------------
     def test_do_run_with_alternate_class_path(self):
-        config = DotDict()
         with mock.patch('collector.app.socorro_app.ConfigurationManager') as cm:
             cm.return_value.context.return_value = mock.MagicMock()
-            with mock.patch('collector.app.socorro_app.signal') as s:
+            with mock.patch('collector.app.socorro_app.signal'):
                 class SomeOtherApp(SocorroApp):
                     app_name='SomeOtherApp'
                     app_verision='1.2.3'
@@ -153,10 +148,9 @@ class TestSocorroApp(TestCase):
 
     #--------------------------------------------------------------------------
     def test_do_run_with_alternate_values_source_list(self):
-        config = DotDict()
         with mock.patch('collector.app.socorro_app.ConfigurationManager') as cm:
             cm.return_value.context.return_value = mock.MagicMock()
-            with mock.patch('collector.app.socorro_app.signal') as s:
+            with mock.patch('collector.app.socorro_app.signal'):
                 class SomeOtherApp(SocorroApp):
                     app_name='SomeOtherApp'
                     app_verision='1.2.3'

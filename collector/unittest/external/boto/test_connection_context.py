@@ -382,7 +382,7 @@ class MultiplePathsTestCase(MultiplePathsBase):
         )
         mocked_get_contents_as_string.side_effect = [thing_as_str]
 
-        result = connection_source.fetch(
+        connection_source.fetch(
             'fff13cf0-5671-4496-ab89-47a922141114',
             'raw_crash'
         )

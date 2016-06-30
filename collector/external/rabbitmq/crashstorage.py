@@ -170,7 +170,7 @@ class RabbitMQCrashStorage(CrashStorageBase):
         # queues the crash_id. The '_consume_acknowledgement_queue' function
         # is run to send acknowledgments back to RabbitMQ
         self._consume_acknowledgement_queue()
-        conn = self.rabbitmq.connection()
+        self.rabbitmq.connection()
         queues = [
             self.rabbitmq.config.priority_queue_name,
             self.rabbitmq.config.standard_queue_name,

@@ -149,7 +149,7 @@ class TestBase(TestCase):
             except AttributeError:
                 p.gather_current_exception()
             raise p
-        except PolyStorageError, x:
+        except PolyStorageError as x:
             eq_(len(x), 3)
             ok_(x.has_exceptions())
             types = [NameError, KeyError, AttributeError]

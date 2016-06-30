@@ -77,7 +77,7 @@ _padding_list = [0, _padding_high_string, 0, _padding_high_string]
 # low, while missing strings are to sort high.
 def _str_to_int(x):
     """given a string, this function converts to an int"""
-    if x == None or x == '':
+    if x is None or x == '':
         return 0
     return int(x)
 
@@ -85,7 +85,7 @@ def _str_to_high_str(x):
     """given a string, this funtion converts the special values '' and None
     to the special value 'zzzzzz'.  This is used to insure empty values have
     a high sort order"""
-    if x == None or x == '':
+    if x is None or x == '':
         return _padding_high_string
     return x
 
@@ -128,7 +128,7 @@ def normalize(version_string, max_version_parts=4):
     for part_count, version_part in enumerate(version_string.split('.')):
         try:
             groups = _version_part_re.match(version_part).groups()
-        except Exception, x:
+        except Exception:
             raise NotAVersionException(version_string)
         version_list.extend(t(x) for x, t in zip(groups, _normalize_fn_list))
     version_list.extend(_padding_list * (max_version_parts - part_count - 1))

@@ -32,7 +32,7 @@ class TestThreadedTaskManager(TestCase):
             ok_(ttm.config == config)
             ok_(ttm.logger == self.logger)
             ok_(ttm.task_func == default_task_func)
-            ok_(ttm.quit == False)
+            ok_(ttm.quit is False)
         finally:
             # we got threads to join
             ttm._kill_worker_threads()
@@ -53,7 +53,7 @@ class TestThreadedTaskManager(TestCase):
             ok_(ttm.thread_list[0].isAlive(),
                             "the worker thread is stillborn")
             ttm.stop()
-            ok_(ttm.queuing_thread.isAlive() == False,
+            ok_(ttm.queuing_thread.isAlive() is False,
                             "the queuing thread did not stop")
         except Exception:
             # we got threads to join

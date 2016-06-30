@@ -6,10 +6,10 @@
 
 from configman import Namespace
 
+from collector.app.generic_app import main
 from collector.app.fetch_transform_save_app import (
     FetchTransformSaveApp,
     FetchTransformSaveWithSeparateNewCrashSourceApp,
-    main
 )
 from collector.external.crashstorage_base import (
     CrashIDNotFound,
@@ -123,7 +123,7 @@ class RawAndProcessedCopierApp(FetchTransformSaveWithSeparateNewCrashSourceApp):
                 'this crash cannot be found in raw crash storage'
             )
             return
-        except Exception, x:
+        except Exception as x:
             self.config.logger.warning(
                 'error loading crash %s',
                 crash_id,

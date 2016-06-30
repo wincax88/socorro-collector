@@ -2,9 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from mock import Mock, patch
-from nose.tools import eq_, ok_
-from contextlib import contextmanager
+from nose.tools import eq_
 
 from configman.dotdict import DotDict, DotDictWithAcquisition
 
@@ -27,7 +25,7 @@ class TestPartialForServiceClasses(TestCase):
                 eq_(local_config, config)
 
         wrapped_class = class_with_partial_init(A, local_config)
-        a = wrapped_class()
+        wrapped_class()
         eq_(wrapped_class.global_config, None)
 
 
@@ -42,7 +40,7 @@ class TestPartialForServiceClasses(TestCase):
                 eq_(local_config, config)
 
         wrapped_class = class_with_partial_init(A, local_config, global_config)
-        a = wrapped_class()
+        wrapped_class()
         eq_(wrapped_class.global_config, global_config)
 
     #--------------------------------------------------------------------------

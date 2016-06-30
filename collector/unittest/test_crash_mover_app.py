@@ -79,7 +79,7 @@ class TestCrashMoverApp(TestCase):
                                      })
                 self.number_of_close_calls = 0
 
-            def close():
+            def close(self):
                 self.number_of_close_calls += 1
 
             def get_raw_crash(self, ooid):
@@ -92,10 +92,6 @@ class TestCrashMoverApp(TestCase):
             def new_crashes(self):
                 for k in self.store.keys():
                     yield k
-
-            def close(self):
-                self.number_of_close_calls += 1
-                pass
 
         class FakeStorageDestination(object):
 

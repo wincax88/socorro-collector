@@ -25,7 +25,7 @@ class TestTaskManager(TestCase):
         ok_(tm.config == config)
         ok_(tm.logger == self.logger)
         ok_(tm.task_func == default_task_func)
-        ok_(tm.quit == False)
+        ok_(tm.quit is False)
 
     def test_executor_identity(self):
         config = DotDict()

@@ -32,7 +32,7 @@ class TestConnection(TestCase):
 
     #--------------------------------------------------------------------------
     def _setup_config(self):
-        config = DotDict();
+        config = DotDict()
         config.crashstorage_class = FakeCrashStore
         return config
 

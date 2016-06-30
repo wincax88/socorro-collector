@@ -4,7 +4,6 @@
 
 from nose.tools import eq_, ok_
 
-from configman import class_converter
 from configman.dotdict import DotDict
 
 from collector.unittest.testbase import TestCase

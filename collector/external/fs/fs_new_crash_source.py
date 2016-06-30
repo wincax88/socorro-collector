@@ -5,8 +5,6 @@
 from configman import Namespace, RequiredConfig
 from configman.converters import class_converter
 
-from functools import partial
-
 
 #==============================================================================
 class FSNewCrashSource(RequiredConfig):

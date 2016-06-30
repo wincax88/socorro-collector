@@ -31,7 +31,7 @@ from collector.lib.util import DotDict
 def dates_to_strings_for_json(obj):
     if isinstance(obj, datetime.datetime):
         return obj.isoformat()
-    return json.JSONEncoder.default(self, obj)
+    raise TypeError('obj not JSON encodable')
 
 
 @contextmanager
@@ -725,13 +725,6 @@ class TarFileSequentialReadingCrashStore(CrashStorageBase):
         default='gzip',
         from_string_converter=class_converter
     )
-
-    #------------------------------------------------------------------------------
-    @staticmethod
-    def stringify_datetimes(obj):
-        if isinstance(obj, datetime.date):
-            return obj.iso_format()
-        return json.JSONEncoder.default(self, obj)
 
     #------------------------------------------------------------------------------
     def _create_tarfile(self):

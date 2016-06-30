@@ -56,7 +56,8 @@ def dateAndDepthFromOoid(ooid):
   try:
     year = 2000 + int(ooid[-6:-4])
     depth = int(ooid[-7])
-    if not depth: depth = oldHardDepth
+    if not depth:
+      depth = oldHardDepth
     return (dt.datetime(year,month,day,tzinfo=UTC),depth)
   except:
     return None,None
