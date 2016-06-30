@@ -46,8 +46,7 @@ class TestConnection(TestCase):
             call(queue='socorro.reprocessing', durable=True),
         ]
         eq_(
-            faked_connection_object.channel.return_value.queue_declare \
-                .call_args_list,
+            faked_connection_object.channel.return_value.queue_declare.call_args_list,
             expected_queue_declare_call_args
         )
 
@@ -98,14 +97,12 @@ class TestConnectionContext(TestCase):
         with patch(pika_string) as mocked_pika_module:
             conn_context_functor = ConnectionContext(config)
             conn = conn_context_functor.connection()
-            mocked_pika_module.credentials.PlainCredentials \
-                .assert_called_once_with('guest', 'guest')
+            mocked_pika_module.credentials.PlainCredentials.assert_called_once_with('guest', 'guest')
             mocked_pika_module.ConnectionParameters.assert_called_once_with(
                 host=conn_context_functor.config.host,
                 port=conn_context_functor.config.port,
                 virtual_host=conn_context_functor.config.virtual_host,
-                credentials=mocked_pika_module.credentials. \
-                    PlainCredentials.return_value
+                credentials=mocked_pika_module.credentials.PlainCredentials.return_value
             )
             mocked_pika_module.BlockingConnection.assert_called_one_with(
                 mocked_pika_module.ConnectionParameters.return_value
