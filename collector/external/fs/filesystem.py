@@ -20,7 +20,7 @@ def cleanEmptySubdirectories(topLimit, leafPath, osModule=os):
     opath = os.path.normpath(leafPath)  # allows relative paths to work
     topLimit = os.path.split(os.path.normpath(topLimit))[1]  # allows name or
                                                              # path
-    if not topLimit in opath:
+    if topLimit not in opath:
         raise OSError(
           errno.ENOENT,
           '%s not on path to %s' % (topLimit, leafPath)
