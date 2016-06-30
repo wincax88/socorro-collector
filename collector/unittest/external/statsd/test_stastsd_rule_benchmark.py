@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from mock import patch, call, Mock
-from nose.tools import eq_, ok_, assert_raises
+from nose.tools import ok_, assert_raises
 from collector.unittest.testbase import TestCase
 
 from datetime import datetime
@@ -16,7 +16,6 @@ from collector.external.statsd.statsd_rule_benchmark import (
     CountStackWalkerTimeoutKills,
     CountStackWalkerFailures,
 )
-from collector.external.statsd.statsd_base import StatsdCounter
 from collector.unittest.lib.test_transform_rules import (
     TestRuleTestLaughable,
     TestRuleTestDangerous

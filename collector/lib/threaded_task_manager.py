@@ -7,7 +7,7 @@ import time
 import threading
 import Queue
 
-from configman import RequiredConfig, Namespace
+from configman import Namespace
 from configman.converters import class_converter
 
 from collector.lib.task_manager import (

@@ -6,10 +6,10 @@
 
 from configman import Namespace
 
+from collector.app.generic_app import main
 from collector.app.fetch_transform_save_app import (
     FetchTransformSaveApp,
     FetchTransformSaveWithSeparateNewCrashSourceApp,
-    main
 )
 from collector.external.crashstorage_base import (
     CrashIDNotFound,

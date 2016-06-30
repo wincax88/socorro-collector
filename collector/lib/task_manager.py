@@ -3,7 +3,6 @@ import threading
 import os
 
 from configman import RequiredConfig, Namespace
-from configman.converters import class_converter
 
 #------------------------------------------------------------------------------
 def default_task_func(a_param):

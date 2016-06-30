@@ -3,7 +3,6 @@ from nose.tools import eq_, ok_, assert_raises
 from collector.unittest.testbase import TestCase
 
 from configman import (
-    class_converter,
     Namespace,
     command_line,
     ConfigFileFutureProxy,
@@ -12,9 +11,7 @@ from configman.dotdict import DotDict
 
 from collector.app.socorro_app import (
     SocorroApp,
-    SocorroWelcomeApp,
     main,
-    klass_to_pypath,
 )
 from collector.app.for_application_defaults import ApplicationDefaultsProxy
 

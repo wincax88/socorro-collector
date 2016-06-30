@@ -3,7 +3,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from mock import patch, call, Mock
-from nose.tools import eq_, ok_, assert_raises
+from nose.tools import eq_
 from collector.unittest.testbase import TestCase
 
 from datetime import datetime

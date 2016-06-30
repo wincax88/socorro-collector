@@ -12,7 +12,6 @@ from contextlib import closing
 
 from collector.lib.ooid import createNewOoid
 from collector.lib.util import DotDict
-from collector.throttler import DISCARD, IGNORE
 from collector.lib.datetimeutil import utc_now
 from collector.external.crashstorage_base import MemoryDumpsMapping
 

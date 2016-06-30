@@ -4,8 +4,6 @@
 
 import sys
 import traceback
-import datetime
-import cStringIO
 import threading
 import collections
 

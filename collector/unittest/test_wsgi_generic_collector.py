@@ -2,10 +2,8 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import hashlib
 import StringIO
 import gzip
-import web
 
 import mock
 from nose.tools import eq_, ok_
