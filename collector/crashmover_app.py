@@ -123,7 +123,7 @@ class RawAndProcessedCopierApp(FetchTransformSaveWithSeparateNewCrashSourceApp):
                 'this crash cannot be found in raw crash storage'
             )
             return
-        except Exception, x:
+        except Exception as x:
             self.config.logger.warning(
                 'error loading crash %s',
                 crash_id,

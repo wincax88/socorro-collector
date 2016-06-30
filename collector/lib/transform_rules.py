@@ -63,7 +63,7 @@ class Rule(RequiredConfig):
         """
         try:
             return self._predicate(*args, **kwargs)
-        except Exception, x:
+        except Exception as x:
             self.config.logger.debug(
                 'Rule %s predicicate failed because of "%s"',
                 to_str(self.__class__),
@@ -93,13 +93,13 @@ class Rule(RequiredConfig):
         classification system itself."""
         try:
             return self._action(*args, **kwargs)
-        except KeyError, x:
+        except KeyError as x:
             self.config.logger.debug(
                 'Rule %s action failed because of missing key "%s"',
                 to_str(self.__class__),
                 x,
             )
-        except Exception, x:
+        except Exception as x:
             self.config.logger.debug(
                 'Rule %s action failed because of "%s"',
                 to_str(self.__class__),
@@ -326,7 +326,7 @@ class TransformRuleSystem(RequiredConfig):
                     self.rules.append(
                         a_rule_class(config[ns_name])
                     )
-                except KeyError, x:
+                except KeyError as x:
                     self.rules.append(
                         a_rule_class(config)
                     )

@@ -540,7 +540,7 @@ class PolyCrashStorage(CrashStorageBase):
         for a_store in self.stores.itervalues():
             try:
                 a_store.close()
-            except Exception, x:
+            except Exception as x:
                 self.logger.error('%s failure: %s', a_store.__class__,
                                   str(x))
                 storage_exception.gather_current_exception()
@@ -579,7 +579,7 @@ class PolyCrashStorage(CrashStorageBase):
             self.quit_check()
             try:
                 a_store.save_processed(processed_crash)
-            except Exception, x:
+            except Exception as x:
                 self.logger.error('%s failure: %s', a_store.__class__,
                                   str(x), exc_info=True)
                 storage_exception.gather_current_exception()
