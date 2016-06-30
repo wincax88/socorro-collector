@@ -95,6 +95,3 @@ class TestOoid(TestCase):
       assert self.baseDate == date, 'Expect %s, got %s' %(self.baseDate, date)
     assert oo.dateAndDepthFromOoid(self.badooid0) == (None, None)
     assert oo.dateAndDepthFromOoid(self.badooid1) == (None, None)
-
-if __name__ == "__main__":
-  unittest.main()
