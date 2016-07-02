@@ -16,7 +16,7 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-from configman import Namespace, class_converter
+from configman import Namespace
 from collector.external.crashstorage_base import (
     CrashStorageBase,
     CrashIDNotFound,
@@ -298,7 +298,8 @@ class FSLegacyRadixTreeStorage(FSRadixTreeStorage):
                                          exc_info=True)
 
 class FSDatedRadixTreeStorage(FSRadixTreeStorage):
-    """This class implements dated radix tree storage -- it enables for traversing
+    """
+    This class implements dated radix tree storage -- it enables for traversing
     a radix tree using an hour/minute prefix. It allows searching for new
     crashes, but doesn't store processed crashes.
 
@@ -318,7 +319,6 @@ class FSDatedRadixTreeStorage(FSRadixTreeStorage):
 
     This storage class is suitable for use as raw crash storage, as it supports
     the ``new_crashes`` method.
-
     """
 
     required_config = Namespace()
@@ -533,7 +533,8 @@ class FSDatedRadixTreeStorage(FSRadixTreeStorage):
 
 class FSLegacyDatedRadixTreeStorage(FSDatedRadixTreeStorage,
                                     FSLegacyRadixTreeStorage):
-    """This legacy radix tree storage implements a backwards-compatible with the
+    """
+    This legacy radix tree storage implements a backwards-compatible with the
     old filesystem storage by setting the symlinks up correctly.
 
     The rationale for creating a diamond structure for multiple inheritance is
@@ -548,7 +549,6 @@ class FSLegacyDatedRadixTreeStorage(FSDatedRadixTreeStorage,
        ``FSDatedRadixTreeStorage``, and the order is dependent as it requires
        the MRO to resolve ``remove`` from the ``FSDatedRadixTreeStorage``
        first, over ``FSLegacyRadixTreeStorage``.
-
     """
     DIR_DEPTH = 1
 
@@ -619,8 +619,10 @@ class FSLegacyDatedRadixTreeStorage(FSDatedRadixTreeStorage,
 
 class FSTemporaryStorage(FSLegacyDatedRadixTreeStorage):
     """Temporary crash storage that uses only the day of the month as the root of
-    the daily directories. This means that it will recycle directories starting
-    at the beginning of each month. This is good for temporary crash storage.
+    the daily directories
+
+    This means that it will recycle directories starting at the beginning of
+    each month. This is good for temporary crash storage.
 
     """
 
@@ -629,14 +631,12 @@ class FSTemporaryStorage(FSLegacyDatedRadixTreeStorage):
         return "%02d" % date.day
 
     def _get_base(self, crash_id):
-        """this method overrides the base method to define the daily file system root
-        directory name. While the default class is to use a YYYYMMDD form, this
-        class substitutes a simple DD form. This is the mechanism of directory
-        recycling as at the first day of a new month we return to the same
-        directiory structures that were created on the first day of the
-        previous month
-
-        """
+        """this method overrides the base method to define the daily file
+        system root directory name.  While the default class is to use a
+        YYYYMMDD form, this class substitutes a simple DD form.  This is the
+        mechanism of directory recycling as at the first day of a new month
+        we return to the same directiory structures that were created on the
+        first day of the previous month"""
         date = dateFromOoid(crash_id)
         if not date:
             date = utc_now()
