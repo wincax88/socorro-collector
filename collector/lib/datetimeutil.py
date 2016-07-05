@@ -4,8 +4,9 @@
 
 import re
 import datetime
-import isodate  # 3rd party
 import json
+
+import isodate
 
 UTC = isodate.UTC
 
@@ -15,13 +16,6 @@ class JSONISOEncoder(json.JSONEncoder):
         if isinstance(obj, (datetime.date, datetime.datetime)):
             return obj.isoformat()
         raise TypeError('obj not JSON encodable: {0!r}'.format(obj))
-
-
-def datetimeFromISOdateString(s):
-    """Take an ISO date string of the form YYYY-MM-DDTHH:MM:SS.S
-    and convert it into an instance of datetime.datetime
-    """
-    return string_to_datetime(s)
 
 
 def strHoursToTimeDelta(hoursAsString):
@@ -96,76 +90,3 @@ def string_to_datetime(date):
                 parsed = parsed.replace(tzinfo=UTC)
             return parsed
     raise ValueError("date not a parsable string")
-
-
-def date_to_string(date):
-    """Transform a date or datetime object into a string and return it.
-
-    Examples:
-    >>> date_to_string(datetime.datetime(2012, 1, 3, 12, 23, 34, tzinfo=UTC))
-    '2012-01-03T12:23:34+00:00'
-    >>> date_to_string(datetime.datetime(2012, 1, 3, 12, 23, 34))
-    '2012-01-03T12:23:34'
-    >>> date_to_string(datetime.date(2012, 1, 3))
-    '2012-01-03'
-
-    """
-    if isinstance(date, datetime.datetime):
-        # Create an ISO 8601 datetime string
-        date_str = date.strftime('%Y-%m-%dT%H:%M:%S')
-        tzstr = date.strftime('%z')
-        if tzstr:
-            # Yes, this is ugly. And no, I haven't found a better way to have a
-            # truly ISO 8601 datetime with timezone in Python.
-            date_str = '%s%s:%s' % (date_str, tzstr[0:3], tzstr[3:5])
-    elif isinstance(date, datetime.date):
-        # Create an ISO 8601 date string
-        date_str = date.strftime('%Y-%m-%d')
-    else:
-        raise TypeError('Argument is not a date or datetime. ')
-
-    return date_str
-
-
-def uuid_to_date(uuid, century='20'):
-    """Return a date created from the last 6 digits of a uuid.
-
-    Arguments:
-        uuid The unique identifier to parse.
-        century The first 2 digits to assume in the year. Default is '20'.
-
-    Examples:
-        >>> uuid_to_date('e8820616-1462-49b6-9784-e99a32120201')
-        datetime.date(2012, 2, 1)
-
-        >>> uuid_to_date('e8820616-1462-49b6-9784-e99a32120201', '18')
-        datetime.date(1812, 2, 1)
-
-    """
-    day = int(uuid[-2:])
-    month = int(uuid[-4:-2])
-    year = int('%s%s' % (century, uuid[-6:-4]))
-
-    return datetime.date(year=year, month=month, day=day)
-
-
-def datestring_to_weekly_partition(date_str):
-    """Return a string representing a weekly partition from a date.
-
-    Our partitions start on Mondays.
-
-    Example:
-        date = '2015-01-09'
-        weekly_partition = '2014-01-05'
-    """
-
-    if isinstance(date_str, datetime.datetime):
-        d = date_str
-    elif date_str == 'now':
-        d = datetime.datetime.now().date()
-    else:
-        d = datetime.datetime.strptime(date_str, '%Y-%m-%d').date()
-
-    last_monday = d + datetime.timedelta(0 - d.weekday())
-
-    return last_monday.strftime('%Y%m%d')
