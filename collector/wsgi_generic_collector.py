@@ -116,6 +116,7 @@ class GenericCollectorBase(RequiredConfig):
     def POST(self, *args):
         raise NotImplementedError()
 
+
 #==============================================================================
 class GenericCollector(GenericCollectorBase):
     #--------------------------------------------------------------------------

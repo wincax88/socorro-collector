@@ -21,4 +21,6 @@ App
 WSGI app
 ========
 
-.. autoconfigman:: collector.wsgi_breakpad_collector.BreakpadCollector2015
+.. autoconfigman:: collector.wsgi_breakpad_collector.BreakpadCollector
+
+.. autoconfigman:: collector.wsgi_generic_collector.GenericCollector

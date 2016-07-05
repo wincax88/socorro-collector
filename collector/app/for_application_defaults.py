@@ -45,7 +45,6 @@ class ApplicationDefaultsProxy(object):
         """
         return {
             'collector': 'collector.collector_app.CollectorApp',
-            'collector2015': 'collector.collector_app.Collector2015App',
             'crashmover': 'collector.crashmover_app.CrashMoverApp',
             'fetch': 'collector.external.fetch_app.FetchApp',
             'copy_processed': 'collector.collector.crashmover_app.ProcessedCrashCopierApp',
