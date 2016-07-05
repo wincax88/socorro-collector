@@ -81,12 +81,14 @@ class TestFSTemporaryStorage(TestCase):
         ok_(os.path.islink(
             os.path.join(
               self.fsrts._get_radixed_parent_directory(self.CRASH_ID_1),
-              self.fsrts._get_date_root_name(self.CRASH_ID_1))))
+              self.CRASH_ID_1
+            )))
         ok_(os.path.exists(
             os.path.join(
               self.fsrts._get_radixed_parent_directory(self.CRASH_ID_1),
-              self.fsrts._get_date_root_name(self.CRASH_ID_1),
-              self.CRASH_ID_1)))
+              self.CRASH_ID_1,
+              self.CRASH_ID_1
+            )))
 
     def test_get_raw_crash(self):
         self._make_test_crash()
@@ -123,7 +125,8 @@ class TestFSTemporaryStorage(TestCase):
         parent = os.path.realpath(
             os.path.join(
               self.fsrts._get_radixed_parent_directory(self.CRASH_ID_1),
-              self.fsrts._get_date_root_name(self.CRASH_ID_1)))
+              self.CRASH_ID_1
+            ))
 
         p = os.path.join(parent, self.CRASH_ID_1)
         ok_(not os.path.exists(p))

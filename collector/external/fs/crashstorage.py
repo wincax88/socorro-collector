@@ -167,6 +167,7 @@ class FSRadixTreeStorage(CrashStorageBase):
         dump_names = []
         for a_pathname in pathnames:
             base_name = os.path.basename(a_pathname)
+            # FIXME: Why 37?
             dump_name = base_name[37:-len(self.config.dump_file_suffix)]
             if not dump_name:
                 dump_name = self.config.dump_field
@@ -182,8 +183,6 @@ class FSRadixTreeStorage(CrashStorageBase):
             except OSError:
                 # probably already created, ignore
                 pass
-                #self.logger.debug("could not make directory: %s" %
-                    #self.config.fs_root)
 
             for fn, contents in files.iteritems():
                 with open(os.sep.join([parent_dir, fn]), 'wb') as f:
@@ -236,17 +235,17 @@ class FSRadixTreeStorage(CrashStorageBase):
                       for dump_file_name in os.listdir(parent_dir)
                       if dump_file_name.startswith(crash_id) and
                          dump_file_name.endswith(self.config.dump_file_suffix)]
-        # we want to return a name/pathname mapping for the raw dumps
+        # We want to return a name/pathname mapping for the raw dumps
         return FileDumpsMapping(zip(self._dump_names_from_paths(dump_paths),
                            dump_paths))
 
     def get_raw_dumps(self, crash_id):
         file_dump_mapping = self.get_raw_dumps_as_files(crash_id)
-        # ensure that we return a name/blob mapping
+        # Ensure that we return a name/blob mapping
         return file_dump_mapping.as_memory_dumps_mapping()
 
     def get_unredacted_processed(self, crash_id):
-        """this method returns an unredacted processed crash"""
+        """Returns an unredacted processed crash"""
         parent_dir = self._get_radixed_parent_directory(crash_id)
         pathname = os.sep.join([
             parent_dir,
@@ -291,7 +290,6 @@ class FSTemporaryStorage(FSRadixTreeStorage):
     SLOT_DEPTH = 2
     DIR_DEPTH = 1
 
-    # From FSLegacyRadixTreeStroage
     def _get_radixed_parent_directory(self, crash_id):
         return os.sep.join(self._get_base(crash_id) +
                            [self.config.name_branch_base] +
@@ -300,8 +298,7 @@ class FSTemporaryStorage(FSRadixTreeStorage):
 
     def remove(self, crash_id):
         dated_path = os.path.realpath(
-            os.sep.join([self._get_radixed_parent_directory(crash_id),
-                         self._get_date_root_name(crash_id)]))
+            os.sep.join([self._get_radixed_parent_directory(crash_id), crash_id]))
 
         try:
             # We can just unlink the symlink and later new_crashes will clean
@@ -328,14 +325,9 @@ class FSTemporaryStorage(FSRadixTreeStorage):
                 self.config.logger.error("could not delete: %s", cand,
                                          exc_info=True)
 
-    # From FSDatedRadixTreeStorage
-
     def _get_current_date(self):
         date = utc_now()
         return "%02d" % date.day
-
-    def _get_date_root_name(self, crash_id):
-        return crash_id
 
     def _get_dump_file_name(self, crash_id, dump_name):
         if dump_name == self.config.dump_field or dump_name is None:
@@ -366,7 +358,7 @@ class FSTemporaryStorage(FSRadixTreeStorage):
         try:
             os.makedirs(parent_dir)
         except OSError:
-            # probably already created, ignore
+            # Probably already created, ignore
             pass
 
         with using_umask(self.config.umask):
@@ -388,6 +380,7 @@ class FSTemporaryStorage(FSRadixTreeStorage):
         * if the directory does, then we remove the symlink in the slot,
           clean up the parent directories if they're empty and then yield
           the crash_id.
+
         """
         current_slot = self._current_slot()
         current_date = self. _get_current_date()
@@ -400,9 +393,8 @@ class FSTemporaryStorage(FSRadixTreeStorage):
             try:
                 hour_slots = os.listdir(dated_base)
             except OSError:
-                # it is okay that the date root doesn't exist - skip on to
-                # the next date
-                #self.logger.info("date root for %s doesn't exist" % date)
+                # It is okay that the date root doesn't exist--skip to the next
+                # date
                 continue
 
             for hour_slot in hour_slots:
@@ -414,8 +406,7 @@ class FSTemporaryStorage(FSRadixTreeStorage):
                     slot = [hour_slot, minute_slot]
 
                     if slot >= current_slot and date >= current_date:
-                        # the slot is currently being used, we want to skip it
-                        # for now
+                        # The slot is currently being used--skip it for now
                         self.logger.info("not processing slot: %s/%s" %
                                          tuple(slot))
                         skip_dir = True
@@ -426,7 +417,7 @@ class FSTemporaryStorage(FSRadixTreeStorage):
 
                     try:
                         # We've finished processing the slot, so we can remove
-                        # it.
+                        # it
                         os.rmdir(minute_slot_base)
                     except OSError:
                         self.logger.error("could not fully remove directory: "
@@ -438,7 +429,7 @@ class FSTemporaryStorage(FSRadixTreeStorage):
                     try:
                         # If the current slot is greater than the hour slot
                         # we're processing, then we can conclude the directory
-                        # is safe to remove.
+                        # is safe to remove
                         os.rmdir(hour_slot_base)
                     except OSError:
                         self.logger.error("could not fully remove directory: "
@@ -446,29 +437,29 @@ class FSTemporaryStorage(FSRadixTreeStorage):
                                           hour_slot_base,
                                           exc_info=True)
 
-    # From FSLegacyDatedRadixTreeStorage
-
     def _create_name_to_date_symlink(self, crash_id, slot):
         root = os.sep.join([os.path.pardir] * (self.SLOT_DEPTH + 1))
         os.symlink(os.sep.join([root, self.config.name_branch_base] +
                                self._get_radix(crash_id)),
-                   os.sep.join([self._get_dated_parent_directory(crash_id,
-                                                                 slot),
+                   os.sep.join([self._get_dated_parent_directory(crash_id, slot),
                                 crash_id]))
 
     def _create_date_to_name_symlink(self, crash_id, slot):
-        """the path is something like name/radix.../crash_id, so what we do is
-           add 2 to the directories to go up _dir_depth + len(radix).
-           we make a link:
-           src:  "date"/slot...
-           dest: "name"/radix.../crash_id/date_root_name"""
+        """The path is something like name/radix.../crash_id, so what we do is
+        add 2 to the directories to go up _dir_depth + len(radix).
+
+        We make a link:
+
+        * src:  "date"/slot...
+        * dest: "name"/radix.../crash_id/date_root_name
+
+        """
         radixed_parent_dir = self._get_radixed_parent_directory(crash_id)
 
         root = os.sep.join([os.path.pardir] *
                            (len(self._get_radix(crash_id)) + self.DIR_DEPTH))
         os.symlink(os.sep.join([root, self.config.date_branch_base] + slot),
-                   os.sep.join([radixed_parent_dir,
-                                self._get_date_root_name(crash_id)]))
+                   os.sep.join([radixed_parent_dir,crash_id]))
 
     def _visit_minute_slot(self, minute_slot_base):
         for crash_id_or_webhead in os.listdir(minute_slot_base):
@@ -479,15 +470,12 @@ class FSTemporaryStorage(FSRadixTreeStorage):
                 crash_id = crash_id_or_webhead
 
                 # This is a link, so we can dereference it to find
-                # crashes.
+                # crashes
                 if os.path.isfile(
                     os.sep.join([namedir,
                                  crash_id +
                                  self.config.json_file_suffix])):
-                    date_root_path = os.sep.join([
-                        namedir,
-                        self._get_date_root_name(crash_id)
-                    ])
+                    date_root_path = os.sep.join([namedir, crash_id])
 
                     yield crash_id
 
@@ -523,16 +511,16 @@ class FSTemporaryStorage(FSRadixTreeStorage):
             else:
                 self.logger.critical("unknown file %s found", namedir)
 
-
-    # From FSTemporaryStorage
-
     def _get_base(self, crash_id):
-        """this method overrides the base method to define the daily file
-        system root directory name.  While the default class is to use a
-        YYYYMMDD form, this class substitutes a simple DD form.  This is the
-        mechanism of directory recycling as at the first day of a new month
-        we return to the same directiory structures that were created on the
-        first day of the previous month"""
+        """Overrides the base method to define the daily file system root directory
+        name.
+
+        While the default class uses a YYYYMMDD form, this class substitutes a
+        simple DD form. This is the mechanism of directory recycling as at the
+        first day of a new month we return to the same directiory structures
+        that were created on the first day of the previous month.
+
+        """
         date = dateFromOoid(crash_id)
         if not date:
             date = utc_now()
