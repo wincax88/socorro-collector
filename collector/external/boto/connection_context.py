@@ -4,7 +4,6 @@
 
 import json
 import socket
-import datetime
 import contextlib
 
 import boto
@@ -14,18 +13,12 @@ import boto.exception
 from configman import Namespace, RequiredConfig, class_converter
 
 from collector.lib.converters import change_default
+from collector.lib.datetimeutil import JSONISOEncoder
 from collector.lib.ooid import dateFromOoid
 
 
 class KeyNotFound(Exception):
     pass
-
-
-class JSONISOEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime.date):
-            return obj.isoformat()
-        raise NotImplementedError("Don't know about {0!r}".format(obj))
 
 
 class KeyBuilderBase(object):

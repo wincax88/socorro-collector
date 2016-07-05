@@ -10,6 +10,13 @@ import json
 UTC = isodate.UTC
 
 
+class JSONISOEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (datetime.date, datetime.datetime)):
+            return obj.isoformat()
+        raise TypeError('obj not JSON encodable: {0!r}'.format(obj))
+
+
 def datetimeFromISOdateString(s):
     """Take an ISO date string of the form YYYY-MM-DDTHH:MM:SS.S
     and convert it into an instance of datetime.datetime
@@ -140,13 +147,6 @@ def uuid_to_date(uuid, century='20'):
     year = int('%s%s' % (century, uuid[-6:-4]))
 
     return datetime.date(year=year, month=month, day=day)
-
-
-class JsonDTEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, datetime.datetime):
-            return obj.strftime("%Y-%m-%d %H:%M:%S.%f")
-        return json.JSONEncoder.default(self, obj)
 
 
 def datestring_to_weekly_partition(date_str):

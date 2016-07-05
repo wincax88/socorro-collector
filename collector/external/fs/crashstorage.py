@@ -2,7 +2,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import datetime
 import json
 import os
 import gzip
@@ -24,14 +23,8 @@ from collector.external.crashstorage_base import (
     MemoryDumpsMapping
 )
 from collector.lib.ooid import dateFromOoid, depthFromOoid
-from collector.lib.datetimeutil import utc_now
+from collector.lib.datetimeutil import JSONISOEncoder, utc_now
 from collector.lib.util import DotDict
-
-
-def dates_to_strings_for_json(obj):
-    if isinstance(obj, datetime.datetime):
-        return obj.isoformat()
-    raise TypeError('obj not JSON encodable')
 
 
 @contextmanager
@@ -193,7 +186,7 @@ class FSRadixTreeStorage(CrashStorageBase):
         processed_crash = processed_crash.copy()
         f = StringIO()
         with closing(gzip.GzipFile(mode='wb', fileobj=f)) as fz:
-            json.dump(processed_crash, fz, default=dates_to_strings_for_json)
+            json.dump(processed_crash, fz, cls=JSONISOEncoder)
         self._save_files(crash_id, {
             crash_id + self.config.jsonz_file_suffix: f.getvalue()
         })
