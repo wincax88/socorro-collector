@@ -88,8 +88,7 @@ class CollectorApp(BaseCollectorApp):
     required_config.storage.add_option(
         'crashstorage_class',
         doc='the source storage class',
-        default='collector.external.fs.crashstorage'
-                '.FSLegacyDatedRadixTreeStorage',
+        default='collector.external.fs.crashstorage.FSRadixTreeStorage',
         from_string_converter=class_converter
     )
 
