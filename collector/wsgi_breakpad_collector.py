@@ -44,11 +44,6 @@ class BreakpadCollector(GenericCollectorBase):
         self.accept_submitted_legacy_processing = \
             self._get_accept_submitted_legacy_processing()
         self.throttler = self._get_throttler()
-        self.crash_storage = self._get_crash_storage()
-
-    #--------------------------------------------------------------------------
-    def _get_crash_storage(self):
-        return self.config.crash_storage
 
     #--------------------------------------------------------------------------
     def POST(self, *args):

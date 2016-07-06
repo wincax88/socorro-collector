@@ -22,7 +22,6 @@ class ObjectWithValue(object):
 
 
 class TestCollectorApp(TestCase):
-
     def get_standard_config(self):
         config = DotDict()
 
@@ -34,8 +33,7 @@ class TestCollectorApp(TestCase):
         config.checksum_method = mock.Mock()
         config.checksum_method.return_value.hexdigest.return_value = 'a_hash'
 
-        config.storage = DotDict()
-        config.storage.crashstorage_class = mock.MagicMock()
+        config.crash_storage = mock.MagicMock()
 
         return config
 
@@ -44,7 +42,7 @@ class TestCollectorApp(TestCase):
         c = GenericCollector(config)
         eq_(c.config, config)
         eq_(c.logger, config.logger)
-        eq_(c.crash_storage, config.storage.crashstorage_class.return_value)
+        eq_(c.crash_storage, config.crash_storage)
         eq_(c.type_tag, 'XXX-')
 
     def test_make_raw_crash(self):
