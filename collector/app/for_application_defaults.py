@@ -47,10 +47,6 @@ class ApplicationDefaultsProxy(object):
             'collector': 'collector.collector_app.CollectorApp',
             'crashmover': 'collector.crashmover_app.CrashMoverApp',
             'fetch': 'collector.external.fetch_app.FetchApp',
-            'copy_processed': 'collector.collector.crashmover_app.ProcessedCrashCopierApp',
-            'copy_raw_and_processed': 'collector.collector.crashmover_app.RawAndProcessedCopierApp',
-            'reprocess_crashlist': 'collector.external.rabbitmq.reprocess_crashlist.ReprocessCrashlistApp',
-            'purge_rmq': 'collector.external.rabbitmq.purge_queue_app.PurgeRabbitMQQueueApp',
         }
 
 
