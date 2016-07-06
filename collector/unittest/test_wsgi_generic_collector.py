@@ -299,7 +299,6 @@ aux_dump contents
         mocked_time.time.return_value = 3.0
         r = c.POST()
         ok_(r.startswith('CrashID=XXX-'))
-        print r
         ok_(r.endswith('120504\n'))
         erc['crash_id'] = r[12:-1]
         c.crash_storage.save_raw_crash.assert_called_with(
