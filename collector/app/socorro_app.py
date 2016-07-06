@@ -160,7 +160,7 @@ class SocorroApp(RequiredConfig):
         return {}
 
     #--------------------------------------------------------------------------
-    def main(self):  # pragma: no cover
+    def main(self):
         """derived classes must override this function with business logic"""
         raise NotImplementedError(
             "A definition of 'main' in a derived class is required"
