@@ -70,7 +70,7 @@ test:
 	${DOCKERCOMPOSE} run appbase ./scripts/test.sh
 
 test-coverage:
-	${DOCKERCOMPOSE} run appbase ./scripts/test.sh --with-coverage --cover-package=collector --cover-html
+	${DOCKERCOMPOSE} run appbase ./scripts/test.sh --with-coverage --cover-package=collector --cover-inclusive --cover-html
 
 docs:
 	${DOCKERCOMPOSE} run appbase $(MAKE) -C docs/ clean
