@@ -6,7 +6,9 @@
 """the collector recieves crashes from the field"""
 
 # This app can be invoked like this:
+#
 #     .../collector/collector_app.py --help
+#
 # replace the ".../" with something that makes sense for your environment
 # set both socorro and configman in your PYTHONPATH
 
@@ -22,9 +24,9 @@ application = None
 
 
 #==============================================================================
-class BaseCollectorApp(App):
+class CollectorApp(App):
     app_name = 'collector'
-    app_version = '5.0'
+    app_version = '4.0'
     app_description = __doc__
 
     #--------------------------------------------------------------------------
@@ -42,17 +44,6 @@ class BaseCollectorApp(App):
         default='collector.webapi.servers.WSGIServer',
         from_string_converter=class_converter
     )
-
-
-#==============================================================================
-class CollectorApp(BaseCollectorApp):
-    app_name = 'collector'
-    app_version = '4.0'
-    app_description = __doc__
-
-    #--------------------------------------------------------------------------
-    # in this section, define any configuration requirements
-    required_config = Namespace()
 
     #--------------------------------------------------------------------------
     # collector namespace
