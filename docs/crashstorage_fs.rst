@@ -2,6 +2,9 @@
 Crash storage: Filesystem
 =========================
 
+Crash storage
+=============
+
 .. autoconfigman:: collector.external.fs.crashstorage.FSRadixTreeStorage
 
 .. autoconfigman:: collector.external.fs.crashstorage.FSDatedRadixTreeStorage
