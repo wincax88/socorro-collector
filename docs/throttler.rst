@@ -2,4 +2,4 @@
 Throttling incoming crashes
 ===========================
 
-.. autoconfigman:: collector.throttler.LegacyThrottler
+.. autoconfigman:: collector.throttler.RuleThrottler

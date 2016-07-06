@@ -21,8 +21,8 @@ IGNORE = 3    # ignore this submission entirely
 
 
 #==============================================================================
-class LegacyThrottler(RequiredConfig):
-    """Throttle incoming crashes
+class RuleThrottler(RequiredConfig):
+    """Throttle incoming crashes based on configured rules
 
     Throttling lets you vet crashes as they're coming into the system. Maybe you
     want to dump crashes that are clearly junk or statistically sample incoming

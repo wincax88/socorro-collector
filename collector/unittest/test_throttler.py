@@ -7,14 +7,14 @@ import mock
 
 from collector.lib.util import DotDict
 from collector.throttler import (
-  LegacyThrottler,
+  RuleThrottler,
   ACCEPT,
   DEFER,
   DISCARD,
   IGNORE
 )
 
-def testLegacyThrottler():
+def test_RuleThrottler():
 
     # phase 1 tests
 
@@ -31,7 +31,7 @@ def testLegacyThrottler():
     }
     config.never_discard = False
     config.logger = mock.Mock()
-    thr = LegacyThrottler(config)
+    thr = RuleThrottler(config)
     expected = 5
     actual = len(thr.processed_throttle_conditions)
     assert expected == actual, \
@@ -142,7 +142,7 @@ def testLegacyThrottler():
     }
     config.never_discard = True
     config.logger = mock.Mock()
-    thr = LegacyThrottler(config)
+    thr = RuleThrottler(config)
     expected = 2
     actual = len(thr.processed_throttle_conditions)
     assert expected == actual, \

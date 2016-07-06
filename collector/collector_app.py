@@ -65,7 +65,7 @@ class CollectorApp(App):
     required_config.namespace('throttler')
     required_config.throttler.add_option(
         'throttler_class',
-        default='collector.throttler.LegacyThrottler',
+        default='collector.throttler.RuleThrottler',
         doc='the class that implements the throttling action',
         from_string_converter=class_converter
     )
