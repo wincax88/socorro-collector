@@ -1,5 +1,5 @@
 =========================
-Crash storage: Filesystem
+Crash storage: filesystem
 =========================
 
 Crash storage
