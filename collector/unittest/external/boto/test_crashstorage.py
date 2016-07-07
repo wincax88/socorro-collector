@@ -117,7 +117,6 @@ class TestCase(collector.unittest.testbase.TestCase):
             self,
             executor=TransactionExecutor,
             executor_for_gets=TransactionExecutor,
-            storage_class='BotoS3CrashStorage',
             host='',
             port=0):
 
@@ -143,17 +142,15 @@ class TestCase(collector.unittest.testbase.TestCase):
             'prefix': 'dev',
             'calling_format': mock.Mock()
         })
-        if storage_class == 'BotoS3CrashStorage':
-            config.bucket_name = 'crash_storage'
-            s3 = BotoS3CrashStorage(config)
-        else:
-            raise Exception('No such storage_class')
+
+        config.bucket_name = 'crash_storage'
+        s3 = BotoS3CrashStorage(config)
+
         s3_conn = s3.connection_source
         s3_conn._connect_to_endpoint = mock.Mock()
         s3_conn._mocked_connection = s3_conn._connect_to_endpoint.return_value
         s3_conn._calling_format.return_value = mock.Mock()
         s3_conn._CreateError = mock.Mock()
-##        s3_conn.ResponseError = mock.Mock()
         s3_conn._open = mock.MagicMock()
 
         return s3
