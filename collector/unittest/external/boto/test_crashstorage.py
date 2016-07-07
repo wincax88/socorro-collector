@@ -21,7 +21,6 @@ from collector.external.boto.connection_context import (
 )
 from collector.external.boto.crashstorage import (
     BotoS3CrashStorage,
-    SupportReasonAPIStorage
 )
 from collector.database.transaction_executor import (
     TransactionExecutor,
@@ -118,7 +117,6 @@ class TestCase(collector.unittest.testbase.TestCase):
             self,
             executor=TransactionExecutor,
             executor_for_gets=TransactionExecutor,
-            storage_class='BotoS3CrashStorage',
             host='',
             port=0):
 
@@ -144,17 +142,15 @@ class TestCase(collector.unittest.testbase.TestCase):
             'prefix': 'dev',
             'calling_format': mock.Mock()
         })
-        if storage_class == 'BotoS3CrashStorage':
-            config.bucket_name = 'crash_storage'
-            s3 = BotoS3CrashStorage(config)
-        elif storage_class == 'SupportReasonAPIStorage':
-            s3 = SupportReasonAPIStorage(config)
+
+        config.bucket_name = 'crash_storage'
+        s3 = BotoS3CrashStorage(config)
+
         s3_conn = s3.connection_source
         s3_conn._connect_to_endpoint = mock.Mock()
         s3_conn._mocked_connection = s3_conn._connect_to_endpoint.return_value
         s3_conn._calling_format.return_value = mock.Mock()
         s3_conn._CreateError = mock.Mock()
-##        s3_conn.ResponseError = mock.Mock()
         s3_conn._open = mock.MagicMock()
 
         return s3
@@ -400,100 +396,6 @@ class TestCase(collector.unittest.testbase.TestCase):
                 ),
             ],
             any_order=True,
-        )
-
-    def test_save_processed_support_reason(self):
-        boto_s3_store = self.setup_mocked_s3_storage(
-            storage_class='SupportReasonAPIStorage'
-        )
-
-        # the tested call
-        report = {
-            'uuid': '3c61f81e-ea2b-4d24-a3ce-6bb9d2140915',
-            'classifications': {
-                'support': {
-                    'classification': 'SIGSEGV'
-                }
-            }
-        }
-        boto_s3_store.save_processed(report)
-
-        # what should have happened internally
-        self.assertEqual(boto_s3_store.connection_source._calling_format.call_count, 1)
-        boto_s3_store.connection_source._calling_format.assert_called_with()
-
-        self.assertEqual(boto_s3_store.connection_source._connect_to_endpoint.call_count, 1)
-        self.assert_s3_connection_parameters(boto_s3_store)
-
-        self.assertEqual(
-            boto_s3_store.connection_source._mocked_connection.get_bucket.call_count,
-            1
-        )
-        boto_s3_store.connection_source._mocked_connection.get_bucket.assert_called_with(
-            'mozilla-support-reason'
-        )
-
-        bucket_mock = boto_s3_store.connection_source._mocked_connection.get_bucket \
-            .return_value
-        self.assertEqual(bucket_mock.new_key.call_count, 1)
-        bucket_mock.new_key.assert_has_calls(
-            [
-                mock.call(
-                    'dev/v1/support_reason/3c61f81e-ea2b-4d24-a3ce-6bb9d2140915'
-                ),
-            ],
-        )
-
-        storage_key_mock = bucket_mock.new_key.return_value
-        self.assertEqual(
-            storage_key_mock.set_contents_from_string.call_count,
-            1
-        )
-
-        storage_key_mock.set_contents_from_string.assert_has_calls(
-            [
-                mock.call(
-                    '{"reasons": ["SIGSEGV"],'
-                    ' "crash_id": "3c61f81e-ea2b-4d24-a3ce-6bb9d2140915"}'
-                ),
-            ],
-            any_order=True,
-        )
-
-    def test_save_processed_support_reason_bad_classification(self):
-        boto_s3_store = self.setup_mocked_s3_storage(
-            storage_class='SupportReasonAPIStorage'
-        )
-
-        # the tested call
-        report = {
-            'uuid': '3c61f81e-ea2b-4d24-a3ce-6bb9d2140915',
-            'classifications': {
-                'support': {
-                    'not_a_thing': 'blah'
-                }
-            }
-        }
-        boto_s3_store.save_processed(report)
-
-        # this should be entirely rejected
-        self.assertEqual(boto_s3_store.connection_source._calling_format.call_count, 0)
-
-        self.assertEqual(boto_s3_store.connection_source._connect_to_endpoint.call_count, 0)
-
-        self.assertEqual(
-            boto_s3_store.connection_source._mocked_connection.get_bucket.call_count,
-            0
-        )
-
-        bucket_mock = boto_s3_store.connection_source._mocked_connection.get_bucket \
-            .return_value
-        self.assertEqual(bucket_mock.new_key.call_count, 0)
-
-        storage_key_mock = bucket_mock.new_key.return_value
-        self.assertEqual(
-            storage_key_mock.set_contents_from_string.call_count,
-            0
         )
 
     def test_save_raw_and_processed(self):
