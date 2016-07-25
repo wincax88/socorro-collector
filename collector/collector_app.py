@@ -26,7 +26,7 @@ application = None
 #==============================================================================
 class CollectorApp(App):
     app_name = 'collector'
-    app_version = '4.0'
+    app_version = '6.0'
     app_description = __doc__
 
     #--------------------------------------------------------------------------
