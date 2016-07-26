@@ -44,6 +44,11 @@ class GenericCollectorBase(RequiredConfig):
         self.logger = self.config.logger
         self.checksum_method = self._get_checksum_method()
         self.accept_submitted_crash_id = self._get_accept_submitted_crash_id()
+        self.crash_storage = self._get_crash_storage()
+
+    #--------------------------------------------------------------------------
+    def _get_crash_storage(self):
+        return self.config.crash_storage
 
     #--------------------------------------------------------------------------
     def _get_accept_submitted_crash_id(self):
@@ -116,6 +121,7 @@ class GenericCollectorBase(RequiredConfig):
     def POST(self, *args):
         raise NotImplementedError()
 
+
 #==============================================================================
 class GenericCollector(GenericCollectorBase):
     #--------------------------------------------------------------------------
@@ -127,26 +133,11 @@ class GenericCollector(GenericCollectorBase):
         doc='the prefix to return to the client in front of the crash_id',
         default='xx-'
     )
-    #--------------------------------------------------------------------------
-    # storage namespace
-    #     the namespace is for config parameters crash storage
-    #--------------------------------------------------------------------------
-    required_config.namespace('storage')
-    required_config.storage.add_option(
-        'crashstorage_class',
-        doc='the source storage class',
-        default='collector.external.fs.crashstorage'
-                '.FSLegacyDatedRadixTreeStorage',
-        from_string_converter=class_converter
-    )
 
     #--------------------------------------------------------------------------
     def __init__(self, config):
         super(GenericCollector, self).__init__(config)
         self.type_tag = self.config.type_tag
-        self.crash_storage = self.config.storage.crashstorage_class(
-            self.config.storage
-        )
 
     #--------------------------------------------------------------------------
     def POST(self, *args):

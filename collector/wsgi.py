@@ -23,9 +23,9 @@ else:
 # invoke the generic main function to create the configman app class and which
 # will then create the wsgi app object.
 main(
-    # we use the generic Socorro App class. We'll rely on configuration to set
-    # the 'application' class object to the appropriate collector_app class
-    # for example, it could be "CollectorApp" or "Collector2015App"
+    # We use the generic Socorro App class. We'll rely on configuration to set
+    # the 'application' class object to the appropriate collector_app class.
+    # For example, it could be "CollectorApp".
     SocorroWelcomeApp,
     config_path=config_path,
     values_source_list=[

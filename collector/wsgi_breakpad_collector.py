@@ -9,11 +9,11 @@ from collector.throttler import DISCARD, IGNORE
 from collector.lib.datetimeutil import utc_now
 from collector.wsgi_generic_collector import GenericCollectorBase
 
-from configman import Namespace, class_converter
+from configman import Namespace
 
 
 #==============================================================================
-class BreakpadCollectorBase(GenericCollectorBase):
+class BreakpadCollector(GenericCollectorBase):
     #--------------------------------------------------------------------------
     # in this section, define any configuration requirements
     required_config = Namespace()
@@ -34,31 +34,16 @@ class BreakpadCollectorBase(GenericCollectorBase):
         default=False
     )
 
+    uri = '/submit'
+
     #--------------------------------------------------------------------------
     def __init__(self, config):
-        super(BreakpadCollectorBase, self).__init__(config)
+        super(BreakpadCollector, self).__init__(config)
         self.dump_field = self._get_dump_field()
         self.dump_id_prefix = self._get_dump_id_prefix()
         self.accept_submitted_legacy_processing = \
             self._get_accept_submitted_legacy_processing()
         self.throttler = self._get_throttler()
-        self.crash_storage = self._get_crash_storage()
-
-    #--------------------------------------------------------------------------
-    def _get_dump_field(self):
-        return self.config.dump_field
-
-    #--------------------------------------------------------------------------
-    def _get_dump_id_prefix(self):
-        return self.config.dump_id_prefix
-
-    #--------------------------------------------------------------------------
-    def _get_accept_submitted_legacy_processing(self):
-        return self.config.accept_submitted_legacy_processing
-
-    #--------------------------------------------------------------------------
-    def _get_crash_storage(self):
-        return self.config.crash_storage
 
     #--------------------------------------------------------------------------
     def POST(self, *args):
@@ -103,17 +88,6 @@ class BreakpadCollectorBase(GenericCollectorBase):
         self.logger.info('%s accepted', crash_id)
         return "CrashID=%s%s\n" % (self.dump_id_prefix, crash_id)
 
-
-#==============================================================================
-class BreakpadCollector(BreakpadCollectorBase):
-    #--------------------------------------------------------------------------
-    # in this section, define any configuration requirements
-    required_config = Namespace()
-
-    #--------------------------------------------------------------------------
-    uri = '/submit'
-    #--------------------------------------------------------------------------
-
     #--------------------------------------------------------------------------
     def _get_throttler(self):
         return self.config.throttler
@@ -137,54 +111,3 @@ class BreakpadCollector(BreakpadCollectorBase):
     #--------------------------------------------------------------------------
     def _get_accept_submitted_crash_id(self):
         return self.config.collector.accept_submitted_crash_id
-
-
-#==============================================================================
-class BreakpadCollector2015(BreakpadCollectorBase):
-    #--------------------------------------------------------------------------
-    # in this section, define any configuration requirements
-    required_config = Namespace()
-    #--------------------------------------------------------------------------
-    # throttler namespace
-    #     the namespace is for config parameters for the throttler system
-    #--------------------------------------------------------------------------
-    required_config.namespace('throttler')
-    required_config.throttler.add_option(
-        'throttler_class',
-        default='collector.throttler.LegacyThrottler',
-        doc='the class that implements the throttling action',
-        from_string_converter=class_converter
-    )
-    #--------------------------------------------------------------------------
-    # storage namespace
-    #     the namespace is for config parameters crash storage
-    #--------------------------------------------------------------------------
-    required_config.namespace('storage')
-    required_config.storage.add_option(
-        'crashstorage_class',
-        doc='the source storage class',
-        default='collector.external.fs.crashstorage'
-                '.FSLegacyDatedRadixTreeStorage',
-        from_string_converter=class_converter
-    )
-
-    #--------------------------------------------------------------------------
-    def _get_throttler(self):
-        try:
-            return self.config.throttler.throttler_instance
-        except KeyError:
-            self.config.throttler.throttler_instance = \
-                self.config.throttler.throttler_class(self.config.throttler)
-            return self.config.throttler.throttler_instance
-
-    #--------------------------------------------------------------------------
-    def _get_crash_storage(self):
-        try:
-            return self.config.storage.storage_instance
-        except KeyError:
-            self.config.storage.storage_instance = \
-                self.config.storage.crashstorage_class(
-                    self.config.storage
-                )
-
-            return self.config.storage.storage_instance
